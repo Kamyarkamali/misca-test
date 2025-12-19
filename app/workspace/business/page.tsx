@@ -1,7 +1,11 @@
-import React from "react";
+import BusinessPage from "@/app/pages/BusinessPage";
 
 function page() {
-  return <div>page</div>;
+  return (
+    <main>
+      <BusinessPage />
+    </main>
+  );
 }
 
 export default page;

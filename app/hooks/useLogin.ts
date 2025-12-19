@@ -15,10 +15,11 @@ export function useLogin() {
         password,
       });
 
+      console.log(res);
+
       const { token, expireAt, refreshToken, refreshTokenExpireAt } =
         res.data.data.accessToken;
-
-      // محاسبه max-age دینامیک
+      const fullname = res.data.data.fullname;
       const now = Math.floor(Date.now() / 1000);
       const tokenMaxAge = expireAt - now;
       const refreshTokenMaxAge = refreshTokenExpireAt - now;
@@ -26,6 +27,8 @@ export function useLogin() {
       // ذخیره در cookie
       document.cookie = `sessionId=${token}; path=/; max-age=${tokenMaxAge}; SameSite=Lax`;
       document.cookie = `refreshToken=${refreshToken}; path=/; max-age=${refreshTokenMaxAge}; SameSite=Lax`;
+      // ذخیره اسم در localstorage
+      localStorage.setItem("fullname", fullname);
 
       setLoading(false);
       return true;
