@@ -1,7 +1,11 @@
-import React from "react";
+import Login from "@/app/pages/Login";
 
-function page() {
-  return <div>page</div>;
+function LoginPage() {
+  return (
+    <div className="bg-[#ECE6E2] min-h-screen">
+      <Login />
+    </div>
+  );
 }
 
-export default page;
+export default LoginPage;

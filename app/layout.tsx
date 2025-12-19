@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Layout from "./layout/Layout";
+import { Toaster } from "react-hot-toast";
+// import Layout from "./layout/Layout";
 
 // font local-yekan bakh
 const myFont = localFont({
@@ -22,7 +23,11 @@ export default function RootLayout({
   return (
     <html lang="fa" dir="rtl">
       <body className={myFont.className}>
-        <Layout>{children}</Layout>
+        {/* <Layout> */}
+        {children}
+        <Toaster position="top-left" />
+
+        {/* </Layout> */}
       </body>
     </html>
   );
