@@ -17,7 +17,7 @@ export function proxy(req: NextRequest) {
   }
 
   if (sessionId && refreshToken && publicRoutes.includes(pathname)) {
-    return NextResponse.redirect(new URL("/workspace/dashboard", req.url));
+    return NextResponse.redirect(new URL("/workspace/business", req.url));
   }
 
   return NextResponse.next();
