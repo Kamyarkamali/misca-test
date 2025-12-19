@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import Button from "../ui/Button";
 import { LoginForm } from "../types/interfaces";
 import { useForm } from "react-hook-form";
@@ -7,6 +6,7 @@ import toast from "react-hot-toast";
 import { LoginMessages } from "../types/enums";
 import { useRouter } from "next/navigation";
 import { useLogin } from "../hooks/useLogin";
+import Image from "next/image";
 
 function Login() {
   const { login, loading, error } = useLogin();
@@ -46,9 +46,9 @@ function Login() {
         {/* Logo */}
         <div className="flex items-center gap-2">
           <Image
-            src="/images/logo.png"
             width={40}
             height={40}
+            src="/images/logo.png"
             alt="فرم ورود میسکا"
           />
           <p className="text-[20px] sm:text-[24.5px] text-[#8F8DF4] font-bold">
@@ -59,9 +59,9 @@ function Login() {
         {/* Title */}
         <div className="flex items-center mt-6 sm:mt-8 gap-1">
           <Image
-            src="/images/icon-login.png"
-            width={24}
-            height={24}
+            width={40}
+            height={40}
+            src="/images/icon-512.png"
             alt="ورود به حساب کاربری"
           />
           <p className="font-bold text-[18px] sm:text-[22px] text-[#212529]">
