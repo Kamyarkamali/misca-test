@@ -17,3 +17,70 @@ export interface AccordionProps {
   contentClassName?: string;
   defaultOpen?: boolean;
 }
+
+// تایپ کراپ تصویر
+export interface UploadResponse {
+  data: {
+    id: string;
+    filePath: string;
+  }[];
+  isSuccess: boolean;
+  messages: string[];
+  errors: string[];
+}
+
+// تایپ ارسال فرم به بک اند
+export interface CreateBusinessPayload {
+  name: string;
+  slug: string;
+  logoId: string | null;
+  logoTypographyId?: string | null;
+  vatPercentage: number;
+  roundingStrategy: 0 | 1 | 2;
+  locationId: null;
+  seoId: null;
+}
+
+export interface UploadedImage {
+  id: string;
+  url: string;
+}
+
+export interface CroppedArea {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface GetBusinessesParams {
+  Page?: number;
+  PageSize?: number;
+  Sort?: string;
+}
+
+export interface Business {
+  id: string;
+  name: string;
+  slug: string;
+  logoUrl: string | null;
+  logoWordmarkUrl: string | null;
+  vatPercentage: number;
+  roundingStrategy: number;
+  createdOn: number;
+}
+
+export interface BusinessesResponse {
+  items: Business[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+}
+
+export interface GetWorksProps {
+  initialData: any;
+  token?: string;
+}

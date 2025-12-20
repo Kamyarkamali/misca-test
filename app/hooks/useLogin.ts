@@ -27,7 +27,10 @@ export function useLogin() {
       // ذخیره در cookie
       document.cookie = `sessionId=${token}; path=/; max-age=${tokenMaxAge}; SameSite=Lax`;
       document.cookie = `refreshToken=${refreshToken}; path=/; max-age=${refreshTokenMaxAge}; SameSite=Lax`;
-      // ذخیره اسم در localstorage
+
+      // ذخیره تو localStorage برای دسترسی راحت در کلاینت
+      localStorage.setItem("sessionId", token);
+      localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("fullname", fullname);
 
       setLoading(false);
