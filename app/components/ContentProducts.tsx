@@ -3,6 +3,7 @@
 import { FC } from "react";
 import { UpdatedContentProductsProps } from "../types/interfaces";
 import { IoTimeOutline } from "react-icons/io5";
+import Image from "next/image";
 
 const ContentProducts: FC<UpdatedContentProductsProps> = ({
   menuData,
@@ -42,11 +43,12 @@ const ContentProducts: FC<UpdatedContentProductsProps> = ({
                     }}
                   >
                     <div className="relative h-[60%] p-2">
-                      <img
+                      <Image
                         src={image}
                         alt={product.name}
-                        className="w-full h-full rounded-2xl object-cover"
-                        loading="lazy"
+                        fill
+                        sizes="(max-width: 768px) 50vw, 40vw"
+                        className="rounded-2xl object-cover"
                       />
                     </div>
 
