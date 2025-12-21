@@ -6,7 +6,7 @@ async function fetchBusinesses(token: string, page = 1, pageSize = 10) {
     `${process.env.NEXT_PUBLIC_API_URL}/workspace/businesses?Page=${page}&PageSize=${pageSize}&Sort=name`,
     {
       headers: { Authorization: `Bearer ${token}` },
-      next: { revalidate: 60 },
+      next: { revalidate: 5 },
     }
   );
 
@@ -44,7 +44,7 @@ async function Page({ searchParams }: PageProps) {
   const data = await fetchBusinesses(token, currentPage, 10);
 
   return (
-    <main className="container mx-auto p-4">
+    <main className="max-w-375 mx-auto p-4">
       <GetWorks initialData={data} currentPage={currentPage} token={token} />
     </main>
   );

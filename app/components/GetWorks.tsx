@@ -47,7 +47,7 @@ export default function GetWorks({ initialData, currentPage }: GetWorksProps) {
   return (
     <div className="space-y-6">
       {/* اطلاعات صفحه */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
+      <div className="bg-linear-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-bold text-gray-800">کسب‌وکارها</h2>
@@ -99,7 +99,7 @@ export default function GetWorks({ initialData, currentPage }: GetWorksProps) {
             >
               <div className="flex items-start gap-4">
                 {business.logoUrl ? (
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     <img
                       src={business.logoUrl}
                       alt={`لوگوی ${business.name}`}
@@ -107,14 +107,14 @@ export default function GetWorks({ initialData, currentPage }: GetWorksProps) {
                     />
                   </div>
                 ) : (
-                  <div className="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center border">
+                  <div className="shrink-0 w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center border">
                     <span className="text-2xl text-gray-400">
                       {business.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
                 )}
 
-                <div className="flex-grow">
+                <div className="grow">
                   <div className="flex justify-between items-start">
                     <h3 className="text-lg font-semibold text-gray-800">
                       {business.name}
@@ -169,9 +169,12 @@ export default function GetWorks({ initialData, currentPage }: GetWorksProps) {
                   <span className="text-xs text-gray-500">
                     ID: {business.id.substring(0, 8)}...
                   </span>
-                  <button className="text-sm text-white  bg-[#8F8DF4] cursor-pointer p-2 rounded-sm  transition-colors">
+                  <Link
+                    href={`/workspace/business/${business.id}`}
+                    className="text-sm text-white  bg-[#8F8DF4] cursor-pointer p-2 rounded-sm  transition-colors"
+                  >
                     مدیریت
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
