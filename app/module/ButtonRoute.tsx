@@ -6,7 +6,7 @@ function ButtonRoute() {
     <section className="flex items-center justify-end mt-3 gap-5">
       <Link
         className="bg-red-400 p-3 rounded-md text-white"
-        href={"/menu/buna_cafe"}
+        href={"/b/buna_cafe/menu"}
       >
         تست صفحه محصولات
       </Link>

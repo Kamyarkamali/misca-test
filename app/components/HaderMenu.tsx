@@ -75,7 +75,6 @@ const HeaderMenu: FC<HeaderMenuProps> = ({ menuData, categoryRefs }) => {
 
   return (
     <header className="relative">
-      {/* منو دسکتاپ */}
       <nav className="hidden md:flex items-center gap-6">
         {categories.map((item, index) => (
           <button

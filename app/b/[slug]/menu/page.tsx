@@ -24,25 +24,20 @@ async function getMenuData(slug: string): Promise<MenuData | null> {
         Accept: "application/json",
       },
       cache: "no-store",
-      // زمان انتظار بیشتر
       next: { revalidate: 0 },
     });
 
-    // اگر response اصلاً نیامد
     if (!response) {
       console.error("No response from API");
       return null;
     }
 
-    // بررسی status کد
     if (!response.ok) {
-      // لاگ خطا
       const errorText = await response.text();
       console.error(`API Error (${response.status}):`, errorText);
 
-      // اگر 404 بود، مستقیماً notFound فراخوانی می‌شود
       if (response.status === 404) {
-        return null; // یا throw new Error('Not found')
+        return null;
       }
 
       return null;
@@ -50,13 +45,11 @@ async function getMenuData(slug: string): Promise<MenuData | null> {
 
     const data = await response.json();
 
-    // بررسی ساختار داده
     if (!data || typeof data !== "object") {
       console.error("Invalid data structure:", data);
       return null;
     }
 
-    // پردازش لوگو
     if (data.business?.logo) {
       data.business.logo = data.business.logo.replace(/\r\n/g, "").trim();
     }
@@ -73,20 +66,17 @@ export default async function BusinessMenuPage({ params }: PageProps) {
     const resolvedParams = await params;
     const slug = resolvedParams.slug;
 
-    // بررسی slug
     if (!slug || typeof slug !== "string" || slug.trim().length < 2) {
       notFound();
     }
 
     const menuData = await getMenuData(slug);
 
-    // بررسی دقیق‌تر
     if (!menuData || !menuData.business) {
       console.error("No valid data returned from API");
       notFound();
     }
 
-    // بررسی فیلدهای ضروری
     if (!menuData.business.name || !menuData.categories) {
       console.error("Missing required fields in data");
       notFound();
@@ -100,12 +90,10 @@ export default async function BusinessMenuPage({ params }: PageProps) {
   } catch (error: any) {
     console.error("Page error:", error);
 
-    // اگر خطا مربوط به not found باشد
     if (error.message?.includes("NEXT_NOT_FOUND")) {
       notFound();
     }
 
-    // برای خطاهای دیگر صفحه خطا نمایش دهید
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center max-w-md">

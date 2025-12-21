@@ -9,6 +9,10 @@ export function proxy(req: NextRequest) {
   const sessionId = req.cookies.get("sessionId")?.value;
   const refreshToken = req.cookies.get("refreshToken")?.value;
 
+  if (pathname.startsWith("/b")) {
+    return NextResponse.next();
+  }
+
   if (pathname === "/") {
     if (sessionId && refreshToken) {
       return NextResponse.redirect(new URL("/workspace/business", req.url));
