@@ -14,6 +14,8 @@ const ContentProducts: FC<UpdatedContentProductsProps> = ({
   const categories = menuData.categories ?? [];
   const businessItems = menuData.business ?? [];
 
+  console.log(businessItems);
+
   return (
     <div className="space-y-16 max-w-252.75 mx-auto">
       {categories.map((category, index) => (
@@ -88,9 +90,11 @@ const ContentProducts: FC<UpdatedContentProductsProps> = ({
       <section>
         <Percentage menuData={businessItems} />
       </section>
-      <section>
-        <AddressComponents menuData={businessItems} />
-      </section>
+      {businessItems.businessLocation && (
+        <section>
+          <AddressComponents menuData={businessItems} />
+        </section>
+      )}
     </div>
   );
 };

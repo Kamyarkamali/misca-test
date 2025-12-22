@@ -1,13 +1,13 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import ContentProducts from "../components/ContentProducts";
 import HaderMenu from "../components/HaderMenu";
 // @ts-ignore
 import { ListMenuProps } from "../types/interfaces";
-import Link from "next/link";
 
-function ListMenu({ menuData, slug }: ListMenuProps) {
+function ListMenu({ menuData }: ListMenuProps) {
+  const [scrolled, setScrolled] = useState<boolean>(false);
   const categoryRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const addToRefs = (el: HTMLDivElement | null, index: number) => {
@@ -16,13 +16,31 @@ function ListMenu({ menuData, slug }: ListMenuProps) {
     }
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-[#EBDCD0]">
       {/* Header Wrapper  */}
-      <header className="w-full px-3 sm:px-6 mt-4">
+      <header
+        className={`w-full  px-3 sm:px-6 mt-4 sticky top-0 z-50 transition-all duration-300 ${
+          scrolled ? "bg-[#EBDCD0]" : "bg-transparent"
+        }`}
+      >
         <section
           className="
-            md:bg-[#EBDED3]
+            
             rounded-md
            md:shadow-sm
             max-w-7xl

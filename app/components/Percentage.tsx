@@ -29,11 +29,23 @@ const Percentage: FC<BusinessItems> = ({ menuData }) => {
       >
         <RiErrorWarningLine className="shrink-0 text-[#3B2F2F]" size={18} />
 
-        <span className="whitespace-nowrap">%{menuData.vatPercentage}</span>
+        <span
+          className={`${
+            menuData?.vatPercentage === 0 ? "hidden" : "block"
+          } whitespace-nowrap`}
+        >
+          %{menuData.vatPercentage}
+        </span>
 
-        <p className="font-normal text-[#3B2F2F]">
-          مالیات بر ارزش افزوده بر قیمت تمامی محصولات اضافه شد.
-        </p>
+        {menuData.vatPercentage >= 1 ? (
+          <p className="font-normal text-[#3B2F2F]">
+            مالیات بر ارزش افزوده بر قیمت تمامی محصولات اضافه شد.
+          </p>
+        ) : (
+          <p className="font-normal text-[#3B2F2F]">
+            این مکان شامل مالیات بر ارزش افزوده نمیشود
+          </p>
+        )}
       </div>
     </div>
   );
