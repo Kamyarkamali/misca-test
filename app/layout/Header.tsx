@@ -12,7 +12,7 @@ function Header() {
 
           <Link
             href="/"
-            className="text-base md:text-lg font-bold text-[#8F8DF4]"
+            className="text-base md:text-lg font-bold text-brand"
           >
             میسکا
           </Link>

@@ -73,7 +73,7 @@ export default function GetWorks({ initialData, currentPage }: GetWorksProps) {
             <button
               disabled={loading}
               onClick={refreshPage}
-              className="p-2 text-sm bg-white text-[#8F8DF4] border border-[#8F8DF4] rounded hover:bg-blue-50 transition-colors flex items-center gap-2"
+              className="p-2 text-sm text-brand border border-brand rounded hover:bg-brand-50 transition-colors flex items-center gap-2"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -153,7 +153,7 @@ export default function GetWorks({ initialData, currentPage }: GetWorksProps) {
                   </span>
                   <Link
                     href={`/panel/${business.slug}/category`}
-                    className="text-sm text-white  bg-[#8F8DF4] cursor-pointer p-2 rounded-sm  transition-colors"
+                    className="text-sm text-white bg-brand-500 hover:bg-brand-600 cursor-pointer p-2 rounded-sm  transition-colors"
                   >
                     مدیریت
                   </Link>

@@ -14,7 +14,7 @@ const Button: React.FC<ButtonProps> = ({
       {...props}
       className={clsx(
         "relative transition-transform duration-150 ease-out active:scale-95",
-        "bg-[#8F8DF4] hover:bg-[#8280df] text-white rounded-md",
+        "bg-brand-500 hover:bg-brand-600 text-white rounded-md",
         "cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
         className
       )}

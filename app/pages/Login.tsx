@@ -53,7 +53,7 @@ function Login() {
             src="/images/logo.png"
             alt="فرم ورود میسکا"
           />
-          <p className="text-[20px] sm:text-[24.5px] text-[#8F8DF4] font-extrabold ">
+          <p className="text-[20px] sm:text-[24.5px] text-brand font-extrabold ">
             میسکا
           </p>
         </div>

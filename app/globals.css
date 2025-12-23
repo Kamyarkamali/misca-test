@@ -3,6 +3,24 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --color-brand-50: #f5f3ff;
+  --color-brand-100: #DFDCFA;
+  --color-brand-200: #CCC7FA;
+  --color-brand-300: #B5AEF6;
+  --color-brand-400: #A199F2;
+  --color-brand-500: #8f8df4; /* رنگ اصلی */
+  --color-brand-600: #7876E3;
+  --color-brand-700: #615FD6;
+  --color-brand-800: #504ECD;
+  --color-brand-900: #4439B6;
+  --color-brand: #8f8df4;
+  --color-brand-light: #8f8df4;
+  --color-brand-dark: #6a69d9;
+}
+
+@tailwind utilities;
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

@@ -57,7 +57,7 @@ export default function FormCreateCategory({
     <div className="relative p-4">
       <button
         onClick={() => setOpen(true)}
-        className="bg-blue-600 text-sm cursor-pointer flex items-center text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+        className="bg-brand text-sm cursor-pointer flex items-center text-white px-4 py-2 rounded-md hover:bg-brand-400 transition-colors"
       >
         <FaPlus size={13} />
         جدید

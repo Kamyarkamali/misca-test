@@ -6,7 +6,7 @@ function ButtonRoute() {
     <section className="flex items-center justify-end mt-3 gap-5 p-3">
       <Link
         href={"/workspace/business/create"}
-        className="text-[13px] flex items-center p-3 text-white rounded-md bg-[#8F8DF4] w-fit"
+        className="text-[13px] flex items-center p-3 text-white rounded-md bg-brand w-fit"
       >
         <GoPlus color="white" />
         کسب و کار جدید
