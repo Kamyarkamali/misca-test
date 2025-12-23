@@ -3,14 +3,14 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 
-interface HeaderMenuProps {
+interface MenuNavbarProps {
   menuData: {
     categories?: { id: string; title: string; products: [] }[];
   };
   categoryRefs?: React.MutableRefObject<(HTMLDivElement | null)[]>;
 }
 
-const HeaderMenu: FC<HeaderMenuProps> = ({ menuData, categoryRefs }) => {
+const MenuNavbar: FC<MenuNavbarProps> = ({ menuData, categoryRefs }) => {
   const categories = menuData?.categories ?? [];
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -76,15 +76,15 @@ const HeaderMenu: FC<HeaderMenuProps> = ({ menuData, categoryRefs }) => {
   return (
     <header className="relative">
       <nav className="hidden md:flex items-center xl:gap-6">
-        {categories.map((item, index) => (
+        {categories.map((category, index) => (
           <button
-            key={item.id}
+            key={category.id}
             onClick={() => handleClick(index)}
             className={`${
-              item?.products.length === 0 ? "hidden" : "block"
-            } text-[14px] text-[#344E7C] hover:text-[#7b96c4] transition-colors font-medium px-3 py-1.5 rounded-lg`}
+              category?.products.length === 0 ? "hidden" : "block"
+            } text-[14px] text-[#344E7C] hover:text-[#7b96c4] transition-colors font-bold px-3 py-1.5 rounded-lg`}
           >
-            {item?.title}
+            {category?.title}
           </button>
         ))}
       </nav>
@@ -186,4 +186,4 @@ const HeaderMenu: FC<HeaderMenuProps> = ({ menuData, categoryRefs }) => {
   );
 };
 
-export default HeaderMenu;
+export default MenuNavbar;

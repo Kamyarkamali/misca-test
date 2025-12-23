@@ -27,7 +27,7 @@ const ContentProducts: FC<UpdatedContentProductsProps> = ({
         >
           <h2
             className={`${category.products.length ? "block" : "hidden"
-              } text-xl sm:text-2xl font-bold text-[#3B2F2F] pb-2`}
+              } text-xl sm:text-2xl font-bold text-[#344e7c] pb-2`}
           >
             {category.title}
           </h2>
