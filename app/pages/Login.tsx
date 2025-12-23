@@ -26,7 +26,7 @@ function Login() {
       toast.success(LoginMessages.SUCCESS);
       router.replace("/workspace/business");
     } else {
-      toast.error(error || LoginMessages.REQUIRED_FIELDS);
+      toast.error(error || LoginMessages.INVALID_CREDENTIALS);
     }
   };
 
