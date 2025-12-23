@@ -61,7 +61,7 @@ export default function GetWorks({ initialData, currentPage }: GetWorksProps) {
           <div>
             <h2 className="text-lg font-bold text-gray-800">کسب‌وکارها</h2>
             <p className="text-gray-400 text-xs mt-1">
-              نمایش {initialData.items.length} از {totalCount} کسب‌وکار
+              نمایش {initialData.items.length} از {totalCount}
             </p>
           </div>
           <div className="flex items-center gap-3">
