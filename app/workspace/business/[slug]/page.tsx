@@ -34,10 +34,10 @@ async function fetchBusinessBySlug(id: string, token: string) {
     }
 
     const data = await res.json();
-    console.log("✅ Business data received:", data);
+    console.log(" Business data received:", data);
     return data;
   } catch (error) {
-    console.error("🔥 Fetch error:", error);
+    console.error(" Fetch error:", error);
     return null;
   }
 }
@@ -58,7 +58,7 @@ export default async function Page({ params }: PageProps) {
     }
 
     const business = await fetchBusinessBySlug(slug, token);
-    console.log("📦 Business fetched:", !!business);
+    console.log(" Business fetched:", !!business);
 
     if (!business) {
       console.warn(" Business not found for slug:", slug);

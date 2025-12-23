@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import ContentProducts from "../components/ContentProducts";
-import HaderMenu from "../components/HaderMenu";
+import HaderMenu from "../components/MenuNavbar";
 // @ts-ignore
 import { ListMenuProps } from "../types/interfaces";
 
@@ -34,13 +34,12 @@ function ListMenu({ menuData }: ListMenuProps) {
     <div className="min-h-screen flex flex-col bg-[#EBDCD0]">
       {/* Header Wrapper  */}
       <header
-        className={`w-full  px-3 sm:px-6 mt-4 sticky top-0 z-50 transition-all duration-300 ${
+        className={`w-full px-3 sm:px-6 mt-4 sticky top-0 z-50 transition-all duration-300 ${
           scrolled ? "bg-[#EBDCD0]" : "bg-transparent"
         }`}
       >
         <section
           className="
-            
             rounded-md
            md:shadow-sm
             max-w-7xl
@@ -88,7 +87,7 @@ function ListMenu({ menuData }: ListMenuProps) {
           text-[#5c4a3a]
         "
       >
-        <p className="text-[13-75px] text-[#212529BF]">قدرت گرفته توسط تیم</p>
+        <p className="text-[13-75px] text-secondary">قدرت گرفته توسط تیم</p>
         <a
           target="_blank"
           className="text-[13-75px] text-blue-500"
