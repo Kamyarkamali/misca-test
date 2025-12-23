@@ -144,6 +144,7 @@ export interface MenuCategory {
 export interface CreateCategoryPayload {
   title: string;
   displayOrder: number;
+  slug: string;
 }
 
 export interface FormCreateCategoryProps {

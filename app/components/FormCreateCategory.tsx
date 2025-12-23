@@ -22,31 +22,30 @@ export default function FormCreateCategory({
     }
 
     if (!params.slug) {
-      toast.error("شناسه کسب‌وکار معتبر نیست");
+      toast.error("شناسه کسب‌وکار نامعتبر است");
       return;
     }
 
-    console.log("فیلد های ارسال به بک اند:", {
+    const payload = {
       title,
       displayOrder,
-      businessId: params.slug,
-    });
+      slug: params.slug,
+    };
+
+    console.log("Payload:", payload);
 
     setLoading(true);
     try {
-      const res = await createCategory({
-        title,
-        displayOrder,
-        businessId: params.slug,
-      });
+      const res = await createCategory(payload);
       console.log("API response:", res);
+
       toast.success("دسته‌بندی با موفقیت ایجاد شد");
       setTitle("");
       setDisplayOrder(0);
       setOpen(false);
-      if (onSuccess) onSuccess();
+      onSuccess?.();
     } catch (err: any) {
-      console.error("Error creating category:", err);
+      console.error(err);
       toast.error(err?.response?.data?.error || "خطایی رخ داد");
     } finally {
       setLoading(false);

@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { menuCategory } from "../data/menuData";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -18,10 +19,24 @@ import { HiHomeModern } from "react-icons/hi2";
 import { FaUserAstronaut } from "react-icons/fa";
 import { BiSupport } from "react-icons/bi";
 import { IoMdArrowDropdown } from "react-icons/io";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 export default function HeaderCategory() {
   const params = useParams<{ slug?: string }>();
   const cafeName = params?.slug ?? "کافه";
+  const [fullname] = useLocalStorage("fullname", "");
+
+  const router = useRouter();
+
+  const handleLogout = () => {
+    document.cookie.split(";").forEach((cookie) => {
+      const name = cookie.split("=")[0].trim();
+      document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+    });
+
+    localStorage.removeItem("fullname");
+    router.replace("/auth/login");
+  };
 
   return (
     <header
@@ -80,7 +95,9 @@ export default function HeaderCategory() {
                 "
               >
                 <FaUserAstronaut />
-                <span className="text-sm font-medium">کامیار کمالی</span>
+                <span className="text-sm font-medium">
+                  {fullname ? fullname : "نام ثبت نشده است"}
+                </span>
                 <IoMdArrowDropdown />
               </Button>
             </DropdownMenuTrigger>
@@ -89,7 +106,9 @@ export default function HeaderCategory() {
               align="end"
               className="flex flex-col items-end cursor-pointer"
             >
-              <DropdownMenuItem className="text-red-600">خروج</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                خروج
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 

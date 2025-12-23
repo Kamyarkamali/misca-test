@@ -15,8 +15,6 @@ export function useLogin() {
         password,
       });
 
-      console.log(res);
-
       const { token, expireAt, refreshToken, refreshTokenExpireAt } =
         res.data.data.accessToken;
       const fullname = res.data.data.fullname;

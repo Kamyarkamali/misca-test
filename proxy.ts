@@ -9,31 +9,29 @@ export function proxy(req: NextRequest) {
   const sessionId = req.cookies.get("sessionId")?.value;
   const refreshToken = req.cookies.get("refreshToken")?.value;
 
-  if (pathname.startsWith("/b")) {
+  if (pathname.startsWith("/businesspanel")) {
+    if (!refreshToken) {
+      return NextResponse.redirect(new URL("/auth/login", req.url));
+    }
     return NextResponse.next();
   }
 
   if (pathname === "/") {
-    if (sessionId && refreshToken) {
+    if (refreshToken) {
       return NextResponse.redirect(new URL("/workspace/business", req.url));
-    } else {
-      return NextResponse.redirect(new URL("/auth/login", req.url));
     }
+    return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
-  if (!sessionId || !refreshToken) {
-    if (!publicRoutes.includes(pathname)) {
-      return NextResponse.redirect(new URL("/auth/login", req.url));
+  if (publicRoutes.some((route) => pathname.startsWith(route))) {
+    if (refreshToken) {
+      return NextResponse.redirect(new URL("/workspace/business", req.url));
     }
     return NextResponse.next();
   }
 
-  if (
-    sessionId &&
-    refreshToken &&
-    publicRoutes.some((route) => pathname.startsWith(route))
-  ) {
-    return NextResponse.redirect(new URL("/workspace/business", req.url));
+  if (!refreshToken) {
+    return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
   return NextResponse.next();

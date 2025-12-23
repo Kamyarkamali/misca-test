@@ -1,14 +1,11 @@
-import React from "react";
 import HeaderCategory from "../components/HeaderCategory";
-import FormCreateCategory from "../components/FormCreateCategory";
+import CategoryManager from "../components/CategoryManager";
 
-function layout() {
+export default function Page() {
   return (
     <>
       <HeaderCategory />
-      <FormCreateCategory />
+      <CategoryManager />
     </>
   );
 }
-
-export default layout;

@@ -129,19 +129,69 @@ export async function getCategories(
   }
 }
 
-export const createCategory = async (data: {
-  title: string;
-  displayOrder: number;
-  businessId: string;
-}) => {
+export const createCategory = async ({
+  title,
+  displayOrder,
+  slug,
+}: CreateCategoryPayload) => {
+  const res = await api.post(
+    "/panel/categories",
+    {
+      title,
+      displayOrder,
+    },
+    {
+      headers: {
+        "x-slug": slug,
+      },
+    }
+  );
+
+  return res.data;
+};
+
+interface GetCategoriesPanelProps {
+  page?: number;
+  pageSize?: number;
+  sort?: string;
+  slug: string;
+}
+
+export const getCategoriesPanel = async ({
+  page = 1,
+  pageSize = 10,
+  sort = "displayOrder",
+  slug,
+}: GetCategoriesPanelProps) => {
+  if (!slug) throw new Error("Slug is required for /panel requests");
+
   try {
-    const res = await api.post("/panel/categories", data);
+    const token = localStorage.getItem("sessionId");
+    if (!token) throw new Error("User is not authenticated");
+
+    const res = await api.get("/panel/categories", {
+      params: { page, pageSize, sort },
+      headers: {
+        "x-slug": slug,
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     return res.data;
   } catch (err: any) {
-    console.error(
-      "Error creating category:",
-      err.response?.data || err.message
-    );
+    console.error("Error fetching panel categories:", err.response || err);
     throw err;
   }
+};
+
+// برای آپدیت دسته بندی های
+export const updateCategory = async (
+  id: string,
+  data: { title: string; order: number },
+  slug: string
+) => {
+  const res = await api.put(`/panel/categories/${id}`, data, {
+    headers: { "x-slug": slug },
+  });
+  return res.data;
 };
