@@ -205,16 +205,16 @@ export default function CategoryManager() {
     }
   };
 
-  const handleDeleteCategory = async (cat: Category) => {
-    if (!slug) return;
+  const handleDeleteCategory = async (id: string) => {
     try {
-      await deleteCategory(cat.id, slug);
-      toast.success("دسته‌بندی حذف شد");
-      fetchCategories();
-      setActiveMenu(null);
-    } catch (err) {
-      console.error("خطا در حذف دسته‌بندی:", err);
+      await deleteCategory(id);
+      toast.success("دسته‌بندی با موفقیت حذف شد");
+
+      // حذف از state
+      setCategories((prev) => prev.filter((c) => c.id !== id));
+    } catch (error) {
       toast.error("خطا در حذف دسته‌بندی");
+      console.error(error);
     }
   };
 
@@ -306,9 +306,9 @@ export default function CategoryManager() {
   const handleDeleteProduct = async (productId: string) => {
     if (!slug) return;
     try {
-      await deleteProduct(productId, slug); // ← اینجا فراخوانی میشه
+      await deleteProduct(productId, slug);
       toast.success("محصول حذف شد");
-      fetchCategories(); // بروزرسانی لیست بعد از حذف
+      fetchCategories();
     } catch (err) {
       console.error("خطا در حذف محصول:", err);
       toast.error("خطا در حذف محصول");

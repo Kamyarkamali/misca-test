@@ -15,10 +15,10 @@ api.interceptors.request.use(
       if (refreshToken) {
         accessToken = await refreshSession(refreshToken);
       }
-      if (!accessToken) {
-        window.location.href = "/auth/login";
-        return Promise.reject("No session token");
-      }
+      // if (!accessToken) {
+      //   window.location.href = "/auth/login";
+      //   return Promise.reject("No session token");
+      // }
     }
 
     if (accessToken && req.headers) {

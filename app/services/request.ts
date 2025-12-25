@@ -16,14 +16,19 @@ export const loginRequest = async (
   password: string
 ): Promise<LoginResponse> => {
   const res = await api.post("/auth/signin-password", { username, password });
-  const { token, refreshToken } = res.data.data.accessToken;
+
+  const accessToken = res.data.data.accessToken.token;
+  const refreshToken = res.data.data.accessToken.refreshToken;
 
   if (typeof window !== "undefined") {
-    localStorage.setItem("sessionId", `Bearer ${token}`);
+    localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
   }
 
-  return { token, refreshToken };
+  return {
+    token: accessToken,
+    refreshToken,
+  };
 };
 
 export const uploadCroppedImage = async (file: File) => {
@@ -245,35 +250,39 @@ export const updateCategory = async (
 };
 
 // پاک کردن دسته بندی
-export const deleteCategory = async (CATEGORY_ID: string, slug: string) => {
-  const res = await api.delete(`/panel/categories/${CATEGORY_ID}`, {
-    headers: { "x-slug": slug },
-    withCredentials: true,
+export const deleteCategory = async (categoryId: string) => {
+  const res = await api.post("/panel/categories/delete", {
+    id: categoryId,
   });
+
   return res.data;
 };
 
 // پاک کردن محصول
 export const deleteProduct = async (productId: string, slug: string) => {
   try {
-    const response = await api.delete(`/panel/products/${productId}`, {
-      headers: {
-        "x-slug": slug,
-      },
-      withCredentials: true,
-    });
+    const res = await api.post(
+      "/panel/products/delete",
+      { id: productId },
+      {
+        headers: {
+          "x-slug": slug,
+        },
+      }
+    );
 
-    return {
-      success: true,
-      data: response.data,
-      status: response.status,
-    };
-  } catch (error: any) {
-    return {
-      success: false,
-      error: error.response?.data?.message || "Failed to delete product",
-      status: error.response?.status,
-    };
+    if (res.data.isSuccess) {
+      return true;
+    } else {
+      console.error("خطا در حذف محصول:", res.data.errors || res.data.messages);
+      return false;
+    }
+  } catch (err: any) {
+    console.error(
+      "خطای axios در حذف محصول:",
+      err.response?.data || err.message
+    );
+    throw err;
   }
 };
 // ساخت محصول
