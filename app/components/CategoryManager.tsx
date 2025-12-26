@@ -31,12 +31,19 @@ import {
   createProduct,
   uploadCroppedImage,
   deleteProduct,
+  updateProduct,
 } from "../services/request";
 
 import UiLoader from "../ui/UiLoader";
 import FormCreateCategory from "./FormCreateCategory";
 import { FiInbox, FiMoreVertical } from "react-icons/fi";
 import { UploadedImage } from "../types/types";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const DEFAULT_IMAGE = "/images/default.webp";
 type ProductImage = {
@@ -46,7 +53,13 @@ type ProductImage = {
 type Product = {
   id: string;
   name: string;
+  price: number;
   finalPrice: number;
+  isAvailable: boolean;
+  calories: number | null;
+  averagePreparationMinutes: number | null;
+  categoryId: string;
+  imageId?: string | null;
   images: ProductImage[];
 };
 
@@ -104,7 +117,7 @@ export default function CategoryManager() {
   const searchQuery = searchParams.get("q")?.toLowerCase() || "";
 
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [search, setSearch] = useState(searchQuery);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [productImageId, setProductImageId] = useState<string | null>(null);
@@ -114,6 +127,10 @@ export default function CategoryManager() {
   const [editDisplayOrder, setEditDisplayOrder] = useState<number>(0);
   const [editLoading, setEditLoading] = useState(false);
   const [isEditCategoryOpen, setIsEditCategoryOpen] = useState<boolean>(false);
+
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isEditProductOpen, setIsEditProductOpen] = useState<boolean>(false);
+  const [editProductLoading, setEditProductLoading] = useState<boolean>(false);
 
   const [isCreateProductOpen, setIsCreateProductOpen] =
     useState<boolean>(false);
@@ -141,6 +158,100 @@ export default function CategoryManager() {
       imageId: null,
     },
   });
+
+  const {
+    register: registerEdit,
+    handleSubmit: handleEditSubmit,
+    reset: resetEditForm,
+  } = useForm<CreateProductForm>({
+    defaultValues: {
+      name: "",
+      price: 0,
+      isAvailable: true,
+      calories: null,
+      averagePreparationMinutes: null,
+      imageId: null,
+    },
+  });
+
+  const handleEditProduct = (product: any) => {
+    setEditingProduct(product);
+
+    resetEditForm({
+      name: product.name,
+      price: product.price,
+      isAvailable: product.isAvailable,
+      calories: product.calories,
+      averagePreparationMinutes: product.averagePreparationMinutes,
+    });
+
+    setIsEditProductOpen(true);
+  };
+
+  const handleSaveProductEdit = async (data: CreateProductForm) => {
+    if (!editingProduct || !slug) return;
+    setEditProductLoading(true);
+
+    try {
+      // پیدا کردن categoryId از state
+      let categoryId = editingProduct.categoryId;
+
+      // اگر categoryId در editingProduct نیست، از state پیدا کنیم
+      if (!categoryId) {
+        for (const cat of categories) {
+          const product = cat.products.find((p) => p.id === editingProduct.id);
+          if (product) {
+            categoryId = cat.id;
+            break;
+          }
+        }
+      }
+
+      // اگر باز هم پیدا نشد
+      if (!categoryId) {
+        toast.error("دسته‌بندی محصول یافت نشد");
+        setEditProductLoading(false);
+        return;
+      }
+
+      const productName = data.name?.trim();
+      if (!productName) {
+        toast.error("نام محصول الزامی است");
+        setEditProductLoading(false);
+        return;
+      }
+
+      const payload = {
+        productModel: {
+          Id: editingProduct.id,
+          CategoryId: categoryId, // استفاده از categoryId پیدا شده
+          Name: productName,
+          Price: Number(data.price) || 0,
+          IsAvailable: Boolean(data.isAvailable),
+          Calories: data.calories ? Number(data.calories) : null,
+          AveragePreparationMinutes: data.averagePreparationMinutes
+            ? Number(data.averagePreparationMinutes)
+            : null,
+          ImageId: editingProduct.imageId || null,
+        },
+      };
+
+      console.log(
+        "Final payload with CategoryId:",
+        JSON.stringify(payload, null, 2)
+      );
+
+      const res = await updateProduct(payload, slug);
+      console.log(res);
+
+      // ... باقی کد
+    } catch (err) {
+      console.error("Full error in handleSaveProductEdit:", err);
+      toast.error("خطا در ویرایش محصول");
+    } finally {
+      setEditProductLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!slug) return;
@@ -195,8 +306,8 @@ export default function CategoryManager() {
         slug
       );
       toast.success("دسته‌بندی بروزرسانی شد");
-      fetchCategories(); // ری‌فچ کردن دسته‌بندی‌ها
-      setIsEditCategoryOpen(false); // بستن مودال
+      fetchCategories();
+      setIsEditCategoryOpen(false);
     } catch (err) {
       console.error("خطا در بروزرسانی دسته‌بندی:", err);
       toast.error("خطا در بروزرسانی دسته‌بندی");
@@ -305,13 +416,15 @@ export default function CategoryManager() {
 
   const handleDeleteProduct = async (productId: string) => {
     if (!slug) return;
+
     try {
       await deleteProduct(productId, slug);
       toast.success("محصول حذف شد");
       fetchCategories();
     } catch (err) {
-      console.error("خطا در حذف محصول:", err);
+      console.log(err);
       toast.error("خطا در حذف محصول");
+    } finally {
     }
   };
 
@@ -369,7 +482,7 @@ export default function CategoryManager() {
                     <FiMoreVertical />
                   </button>
 
-                  <span>{cat.title}</span>
+                  <span>{cat?.title}</span>
                 </div>
 
                 <button
@@ -389,7 +502,7 @@ export default function CategoryManager() {
                     </button>
                     <button
                       className="block px-4 py-2 hover:bg-red-50 text-red-600 w-full text-right"
-                      onClick={() => handleDeleteCategory(cat)}
+                      onClick={() => handleDeleteCategory(cat.id)}
                     >
                       حذف
                     </button>
@@ -414,27 +527,51 @@ export default function CategoryManager() {
                     {cat.products.map((p) => (
                       <div
                         key={p.id}
-                        className="bg-white rounded-xl shadow p-3 text-center"
+                        className="bg-white rounded-xl shadow p-3 text-center relative"
                       >
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className="absolute cursor-pointer top-2 right-2 p-0 w-8 h-8 flex items-center justify-center border border-dashed rounded-md hover:bg-gray-100 transition-colors">
+                              <FiMoreVertical
+                                size={20}
+                                className="text-gray-600"
+                              />
+                            </button>
+                          </DropdownMenuTrigger>
+
+                          <DropdownMenuContent
+                            align="end"
+                            className="z-50 w-40"
+                          >
+                            <DropdownMenuItem
+                              onClick={() => handleEditProduct(p)}
+                            >
+                              ویرایش
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem
+                              className="text-red-600"
+                              onClick={() => handleDeleteProduct(p.id)}
+                            >
+                              حذف
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+
                         <div className="h-24 relative mb-2">
                           <Image
-                            src={p.images?.[0] || DEFAULT_IMAGE}
+                            src={p.images?.[0]?.imageUrl || DEFAULT_IMAGE}
                             alt={p.name}
                             fill
                             className="object-cover rounded"
                           />
                         </div>
-                        <p className="text-sm font-medium">{p.name}</p>
 
-                        <p className="text-xs text-gray-500 ">
-                          {p.finalPrice.toLocaleString()} تومان
+                        <p className="text-sm font-medium">{p.name}</p>
+                        <p className="text-xs text-gray-500">
+                          {(p.finalPrice ?? p.price ?? 0).toLocaleString()}{" "}
+                          تومان
                         </p>
-                        <button
-                          className=" top-9 right-0 text-red-500 text-xs hover:text-red-700"
-                          onClick={() => handleDeleteProduct(p.id)}
-                        >
-                          حذف
-                        </button>
                       </div>
                     ))}
                   </div>
@@ -446,6 +583,56 @@ export default function CategoryManager() {
               </AccordionContent>
             </AccordionItem>
           ))}
+          <Dialog open={isEditProductOpen} onOpenChange={setIsEditProductOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>ویرایش محصول</DialogTitle>
+              </DialogHeader>
+
+              <form
+                onSubmit={handleEditSubmit(handleSaveProductEdit)}
+                className="space-y-3"
+              >
+                <Input
+                  placeholder="نام محصول"
+                  {...registerEdit("name", { required: true })}
+                />
+
+                <Input
+                  type="number"
+                  placeholder="قیمت"
+                  {...registerEdit("price", { valueAsNumber: true })}
+                />
+
+                <label className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" {...registerEdit("isAvailable")} />
+                  محصول موجود است
+                </label>
+
+                <Input
+                  type="number"
+                  placeholder="کالری"
+                  {...registerEdit("calories", {
+                    setValueAs: (v) => (v === "" ? null : Number(v)),
+                  })}
+                />
+
+                <Input
+                  type="number"
+                  placeholder="زمان آماده‌سازی (دقیقه)"
+                  {...registerEdit("averagePreparationMinutes", {
+                    setValueAs: (v) => (v === "" ? null : Number(v)),
+                  })}
+                />
+
+                <DialogFooter>
+                  <Button type="submit" disabled={editProductLoading}>
+                    {editProductLoading ? "در حال ذخیره..." : "ذخیره"}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
         </Accordion>
       )}
 
@@ -458,7 +645,7 @@ export default function CategoryManager() {
 
           <form onSubmit={handleSubmit(onCreateProduct)} className="space-y-3">
             <Input
-              className="text-left placeholder:text-right"
+              className="text-right placeholder:text-right"
               placeholder="نام محصول"
               {...register("name", { required: "نام محصول الزامی است" })}
             />
