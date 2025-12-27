@@ -1,0 +1,434 @@
+"use client";
+
+import { useState, useCallback, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import Image from "next/image";
+import Cropper from "react-easy-crop";
+import { MdOutlineAddPhotoAlternate } from "react-icons/md";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+
+import {
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  uploadCroppedImage,
+} from "../services/request";
+import ProductCard from "./ProductCard";
+
+export type ProductImage = {
+  id: string;
+  url: string;
+};
+
+type Product = {
+  id: string;
+  name: string;
+  price: number;
+  isAvailable: boolean;
+  calories: number | null;
+  averagePreparationMinutes: number | null;
+  categoryId: string;
+  imageId?: string | null;
+  images: ProductImage[];
+};
+
+type CreateProductForm = {
+  name: string;
+  price: number;
+  isAvailable: boolean;
+  calories: number | null;
+  averagePreparationMinutes: number | null;
+  imageId?: string | null;
+};
+
+type ProductManagerProps = {
+  categoryId: string;
+  slug: string;
+  products?: Product[];
+  fetchCategories: () => void;
+};
+
+const createImage = (url: string): Promise<HTMLImageElement> =>
+  new Promise((resolve, reject) => {
+    const img = new window.Image();
+    img.src = url;
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+  });
+
+async function getCroppedBlob(imageSrc: string, crop: any) {
+  const image = await createImage(imageSrc);
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d")!;
+  canvas.width = crop.width;
+  canvas.height = crop.height;
+  ctx.drawImage(
+    image,
+    crop.x,
+    crop.y,
+    crop.width,
+    crop.height,
+    0,
+    0,
+    crop.width,
+    crop.height
+  );
+  return new Promise<Blob>((resolve) =>
+    canvas.toBlob((blob) => resolve(blob!), "image/jpeg")
+  );
+}
+
+export default function ProductManager({
+  categoryId,
+  slug,
+  products = [],
+  fetchCategories,
+}: ProductManagerProps) {
+  const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState<ProductImage | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedArea, setCroppedArea] = useState<any>(null);
+  const [imageId, setImageId] = useState<string | null>(null);
+
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isEditProductOpen, setIsEditProductOpen] = useState(false);
+  const [editProductLoading, setEditProductLoading] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
+
+  const { register, handleSubmit, reset } = useForm<CreateProductForm>({
+    defaultValues: {
+      isAvailable: true,
+      calories: null,
+      averagePreparationMinutes: null,
+      imageId: null,
+    },
+  });
+
+  const {
+    register: registerEdit,
+    handleSubmit: handleEditSubmit,
+    reset: resetEditForm,
+  } = useForm<CreateProductForm>({
+    defaultValues: {
+      name: "",
+      price: 0,
+      isAvailable: true,
+      calories: null,
+      averagePreparationMinutes: null,
+      imageId: null,
+    },
+  });
+
+  const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.[0]) return;
+    const reader = new FileReader();
+    reader.onload = () => setImageSrc(reader.result as string);
+    reader.readAsDataURL(e.target.files[0]);
+  };
+
+  const onCropComplete = useCallback((_: any, cropped: any) => {
+    setCroppedArea(cropped);
+  }, []);
+
+  const handleUploadCroppedImage = async () => {
+    if (!imageSrc || !croppedArea) return;
+    setUploading(true);
+    try {
+      const blob = await getCroppedBlob(imageSrc, croppedArea);
+      const file = new File([blob], "product.jpg", { type: "image/jpeg" });
+
+      const res = await uploadCroppedImage(file);
+      if (!res?.isSuccess || !res.data?.length) {
+        toast.error("آپلود عکس ناموفق بود");
+        return;
+      }
+
+      const image = res.data[0];
+      setUploadedImage({ id: image.id, url: image.url });
+      setImageId(image.id);
+      toast.success("عکس با موفقیت آپلود شد");
+      setImageSrc(null);
+    } catch {
+      toast.error("خطا در آپلود عکس");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const onCreateProduct = async (data: CreateProductForm) => {
+    if (!imageId) {
+      toast.error("لطفاً ابتدا عکس را آپلود کنید");
+      return;
+    }
+    setCreateLoading(true);
+    try {
+      await createProduct({ ...data, categoryId, imageId }, slug);
+      toast.success("محصول با موفقیت ثبت شد");
+      setIsCreateProductOpen(false);
+      reset();
+      setUploadedImage(null);
+      setImageId(null);
+      fetchCategories();
+    } catch {
+      toast.error("خطا در ثبت محصول");
+    } finally {
+      setCreateLoading(false);
+    }
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    resetEditForm({
+      name: product.name,
+      price: product.price,
+      isAvailable: product.isAvailable,
+      calories: product.calories,
+      averagePreparationMinutes: product.averagePreparationMinutes,
+    });
+    setIsEditProductOpen(true);
+  };
+
+  const handleSaveProductEdit = async (data: CreateProductForm) => {
+    if (!editingProduct) return;
+    setEditProductLoading(true);
+    try {
+      const payload = {
+        productModel: {
+          Id: editingProduct.id,
+          CategoryId: categoryId,
+          Name: data.name,
+          Price: Number(data.price) || 0,
+          IsAvailable: Boolean(data.isAvailable),
+          Calories: data.calories ? Number(data.calories) : null,
+          AveragePreparationMinutes: data.averagePreparationMinutes
+            ? Number(data.averagePreparationMinutes)
+            : null,
+          ImageId: editingProduct.imageId || null,
+        },
+      };
+      await updateProduct(payload, slug);
+      toast.success("محصول بروزرسانی شد");
+      setIsEditProductOpen(false);
+      fetchCategories();
+    } catch {
+      toast.error("خطا در ویرایش محصول");
+    } finally {
+      setEditProductLoading(false);
+    }
+  };
+
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      await deleteProduct(productId, slug);
+      toast.success("محصول حذف شد");
+      fetchCategories();
+    } catch {
+      toast.error("خطا در حذف محصول");
+    }
+  };
+
+  // ریست فرم وقتی دیالوگ بسته شد
+  useEffect(() => {
+    if (!isCreateProductOpen) {
+      setUploadedImage(null);
+      setImageId(null);
+      setImageSrc(null);
+      reset();
+    }
+  }, [isCreateProductOpen, reset]);
+
+  return (
+    <div>
+      <Button
+        className="mt-4 bg-blue-500 hover:bg-blue-600"
+        size="sm"
+        onClick={() => setIsCreateProductOpen(true)}
+      >
+        + ثبت محصول
+      </Button>
+
+      {products.length ? (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+          {products.map((p) => (
+            <ProductCard
+              key={p.id}
+              product={p}
+              onEdit={handleEditProduct}
+              onDelete={handleDeleteProduct}
+            />
+          ))}
+        </div>
+      ) : (
+        <p className="text-red-300 font-bold mt-2">
+          برای این دسته بندی محصولی ثبت نشده
+        </p>
+      )}
+
+      {/* =================== CREATE DIALOG =================== */}
+      <Dialog open={isCreateProductOpen} onOpenChange={setIsCreateProductOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>ثبت محصول</DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit(onCreateProduct)} className="space-y-3">
+            <Input
+              placeholder="نام محصول"
+              {...register("name", { required: true })}
+            />
+            <Input
+              type="number"
+              placeholder="قیمت"
+              {...register("price", { valueAsNumber: true })}
+            />
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" {...register("isAvailable")} />
+              محصول موجود است
+            </label>
+            <Input
+              type="number"
+              placeholder="کالری (اختیاری)"
+              {...register("calories", {
+                setValueAs: (v) => (v === "" ? null : Number(v)),
+              })}
+            />
+            <Input
+              type="number"
+              placeholder="زمان آماده‌سازی (دقیقه)"
+              {...register("averagePreparationMinutes", {
+                setValueAs: (v) => (v === "" ? null : Number(v)),
+              })}
+            />
+
+            <input
+              type="file"
+              accept="image/*"
+              onChange={onSelectFile}
+              className="hidden"
+              id="product-image"
+            />
+            <label
+              htmlFor="product-image"
+              className="w-23 h-23 border border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:text-blue-500 transition bg-gray-50"
+            >
+              <MdOutlineAddPhotoAlternate size={36} />
+            </label>
+
+            {imageSrc && (
+              <div className="relative h-64 bg-black mt-2">
+                <Cropper
+                  image={imageSrc}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={1}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                />
+                <Button
+                  type="button"
+                  className="absolute bottom-2 left-2"
+                  onClick={handleUploadCroppedImage}
+                  disabled={uploading}
+                >
+                  {uploading ? "در حال آپلود..." : "تایید عکس"}
+                </Button>
+              </div>
+            )}
+
+            {uploadedImage && (
+              <div className="flex items-center gap-2 mt-2">
+                <Image
+                  src={uploadedImage.url}
+                  alt="uploaded"
+                  width={48}
+                  height={48}
+                  className="rounded"
+                />
+                <button
+                  type="button"
+                  className="text-red-500 text-xs"
+                  onClick={() => {
+                    setUploadedImage(null);
+                    setImageId(null);
+                  }}
+                >
+                  حذف
+                </button>
+              </div>
+            )}
+
+            <DialogFooter>
+              <Button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-600"
+                disabled={createLoading}
+              >
+                {createLoading ? "در حال ثبت..." : "ثبت محصول"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* =================== EDIT DIALOG =================== */}
+      <Dialog open={isEditProductOpen} onOpenChange={setIsEditProductOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>ویرایش محصول</DialogTitle>
+          </DialogHeader>
+
+          <form
+            onSubmit={handleEditSubmit(handleSaveProductEdit)}
+            className="space-y-3"
+          >
+            <Input
+              placeholder="نام محصول"
+              {...registerEdit("name", { required: true })}
+            />
+            <Input
+              type="number"
+              placeholder="قیمت"
+              {...registerEdit("price", { valueAsNumber: true })}
+            />
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" {...registerEdit("isAvailable")} />
+              محصول موجود است
+            </label>
+            <Input
+              type="number"
+              placeholder="کالری (اختیاری)"
+              {...registerEdit("calories", {
+                setValueAs: (v) => (v === "" ? null : Number(v)),
+              })}
+            />
+            <Input
+              type="number"
+              placeholder="زمان آماده‌سازی (دقیقه)"
+              {...registerEdit("averagePreparationMinutes", {
+                setValueAs: (v) => (v === "" ? null : Number(v)),
+              })}
+            />
+            <DialogFooter>
+              <Button type="submit" disabled={editProductLoading}>
+                {editProductLoading ? "در حال ذخیره..." : "ذخیره"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

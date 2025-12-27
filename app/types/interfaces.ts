@@ -171,3 +171,21 @@ export interface UpdateProductPayload {
   imageId?: string | null;
   price: any;
 }
+
+export type ProductImage = {
+  id: string;
+  imageUrl: string;
+};
+
+export type Product = {
+  id: string;
+  name: string;
+  price: number;
+  finalPrice: number;
+  isAvailable: boolean;
+  calories: number | null;
+  averagePreparationMinutes: number | null;
+  categoryId: string;
+  imageId?: string | null;
+  images: ProductImage[];
+};

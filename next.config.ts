@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+// دامنه برای گرفتن عکس های خارجی-
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
@@ -17,6 +19,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "api.misca.ir",
         pathname: "/temp/uploads/**",
+      },
+      {
+        protocol: "https",
+        hostname: "api.misca.ir",
+        pathname: "/product-images/**",
       },
     ],
   },

@@ -141,12 +141,14 @@ export const createCategory = async ({
   displayOrder,
   slug,
 }: CreateCategoryPayload) => {
+  console.log({ title, displayOrder });
   const res = await api.post(
     "/panel/categories",
     {
       title,
       displayOrder,
     },
+
     {
       headers: {
         "x-slug": slug,
@@ -250,15 +252,6 @@ export const updateCategory = async (
   return res.data;
 };
 
-// پاک کردن دسته بندی
-export const deleteCategory = async (categoryId: string) => {
-  const res = await api.post("/panel/categories/delete", {
-    id: categoryId,
-  });
-
-  return res.data;
-};
-
 // پاک کردن محصول
 export const deleteProduct = async (productId: string, slug: string) => {
   try {
@@ -323,5 +316,66 @@ export const updateProduct = async (
     console.error("Update Product Error:", err.response?.data || err.message);
     console.error("Full error:", err);
     throw new Error("خطا در ویرایش محصول");
+  }
+};
+
+// آپدیت دسته بندی ها-الویت
+export const updateCategoryOrders = async (
+  orders: { id: string; displayOrder: number }[],
+  slug: string
+) => {
+  await api.post(
+    `/panel/categories/update-order`,
+    {
+      orders,
+    },
+    {
+      headers: { "x-slug": slug },
+    }
+  );
+};
+
+// پاک کردن دسته بندی ها
+export const deleteCategory = async (categoryId: string, slug: string) => {
+  if (!slug) throw new Error("Business slug is required");
+
+  const res = await api.post(
+    "/panel/categories/delete",
+    { id: categoryId },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "x-slug": slug,
+      },
+    }
+  );
+
+  return res.data;
+};
+
+// ویرایش متن دسته بندی
+export const updateCategoryTitle = async (
+  categoryId: string,
+  title: string,
+  slug: string
+) => {
+  try {
+    const res = await api.post(
+      `/panel/categories/update`,
+      {
+        id: categoryId,
+        title: title,
+      },
+      {
+        headers: {
+          "x-slug": slug,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.error("خطا در بروزرسانی دسته‌بندی:", err);
+    throw err;
   }
 };
