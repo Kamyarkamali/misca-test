@@ -7,7 +7,6 @@ import Image from "next/image";
 import Cropper from "react-easy-crop";
 import { MdOutlineAddPhotoAlternate } from "react-icons/md";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -22,8 +21,9 @@ import {
   deleteProduct,
   uploadCroppedImage,
 } from "../services/request";
-import ProductCard from "./ProductCard";
+import ProductCard, { Product } from "./ProductCard";
 import { ProductImages, Products } from "../types/types";
+import { FloatingInput } from "@/components/floating-input";
 
 type CreateProductForm = {
   name: string;
@@ -81,6 +81,8 @@ export default function ProductManager({
   const [uploadedImage, setUploadedImage] = useState<ProductImages | null>(
     null
   );
+  const DEFAULT_IMAGE_ID = "/images/default.webp";
+
   const [uploading, setUploading] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -155,13 +157,20 @@ export default function ProductManager({
   };
 
   const onCreateProduct = async (data: CreateProductForm) => {
-    if (!imageId) {
-      toast.error("لطفاً ابتدا عکس را آپلود کنید");
-      return;
-    }
     setCreateLoading(true);
     try {
-      await createProduct({ ...data, categoryId, imageId }, slug);
+      const finalImageId = uploadedImage?.id ?? null;
+
+      const payload = {
+        ...data,
+        categoryId,
+        imageId: finalImageId,
+        calories: data.calories ?? null,
+        averagePreparationMinutes: data.averagePreparationMinutes ?? null,
+      };
+
+      await createProduct(payload, slug);
+
       toast.success("محصول با موفقیت ثبت شد");
       setIsCreateProductOpen(false);
       reset();
@@ -176,13 +185,23 @@ export default function ProductManager({
   };
 
   const handleEditProduct = (product: Products) => {
-    setEditingProduct(product);
-    resetEditForm({
+    const productForCard: Product = {
+      id: product.id,
       name: product.name,
       price: product.price,
+      finalPrice: product.finalPrice,
+      averagePreparationMinutes: product.averagePreparationMinutes ?? undefined,
+      calories: product.calories ?? undefined,
+      images: product.images,
+    };
+
+    setEditingProduct(product);
+    resetEditForm({
+      name: productForCard.name,
+      price: productForCard.price,
       isAvailable: product.isAvailable,
-      calories: product.calories,
-      averagePreparationMinutes: product.averagePreparationMinutes,
+      calories: productForCard.calories,
+      averagePreparationMinutes: productForCard.averagePreparationMinutes,
     });
     setIsEditProductOpen(true);
   };
@@ -190,22 +209,20 @@ export default function ProductManager({
   const handleSaveProductEdit = async (data: CreateProductForm) => {
     if (!editingProduct) return;
     setEditProductLoading(true);
+
     try {
       const payload = {
-        productModel: {
-          Id: editingProduct.id,
-          CategoryId: categoryId,
-          Name: data.name,
-          Price: Number(data.price) || 0,
-          IsAvailable: Boolean(data.isAvailable),
-          Calories: data.calories ? Number(data.calories) : null,
-          AveragePreparationMinutes: data.averagePreparationMinutes
-            ? Number(data.averagePreparationMinutes)
-            : null,
-          ImageId: editingProduct.imageId || null,
-        },
+        id: editingProduct.id,
+        categoryId: categoryId,
+        name: data.name,
+        isAvailable: Boolean(data.isAvailable),
+        calories: data.calories ?? null,
+        averagePreparationMinutes: data.averagePreparationMinutes ?? null,
+        imageId: editingProduct.imageId ?? null,
       };
+
       await updateProduct(payload, slug);
+
       toast.success("محصول بروزرسانی شد");
       setIsEditProductOpen(false);
       fetchCategories();
@@ -226,7 +243,6 @@ export default function ProductManager({
     }
   };
 
-  // ریست فرم وقتی دیالوگ بسته شد
   useEffect(() => {
     if (!isCreateProductOpen) {
       setUploadedImage(null);
@@ -251,7 +267,13 @@ export default function ProductManager({
           {products.map((p) => (
             <ProductCard
               key={p.id}
-              product={p}
+              product={{
+                ...p,
+                averagePreparationMinutes:
+                  p.averagePreparationMinutes ?? undefined,
+                calories: p.calories ?? undefined,
+              }}
+              // @ts-ignore
               onEdit={handleEditProduct}
               onDelete={handleDeleteProduct}
             />
@@ -270,32 +292,32 @@ export default function ProductManager({
           </DialogHeader>
 
           <form onSubmit={handleSubmit(onCreateProduct)} className="space-y-3">
-            <Input
-              placeholder="نام محصول"
+            <FloatingInput
+              label="نام محصول"
               {...register("name", { required: true })}
             />
-            <Input
+            <FloatingInput
               className="text-left"
               type="number"
-              placeholder="قیمت"
+              label="قیمت"
               {...register("price", { valueAsNumber: true })}
             />
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" {...register("isAvailable")} />
               محصول موجود است
             </label>
-            <Input
+            <FloatingInput
               className="text-left"
               type="number"
-              placeholder="کالری (اختیاری)"
+              label="کالری (اختیاری)"
               {...register("calories", {
                 setValueAs: (v) => (v === "" ? null : Number(v)),
               })}
             />
-            <Input
+            <FloatingInput
               className="text-left"
               type="number"
-              placeholder="زمان آماده‌سازی (دقیقه)"
+              label="زمان آماده‌سازی (دقیقه)"
               {...register("averagePreparationMinutes", {
                 setValueAs: (v) => (v === "" ? null : Number(v)),
               })}
@@ -341,7 +363,7 @@ export default function ProductManager({
               <div className="flex items-center gap-2 mt-2">
                 <Image
                   // @ts-ignore
-                  src={uploadedImage.url}
+                  src={uploadedImage.url || DEFAULT_IMAGE_URL}
                   alt="uploaded"
                   width={48}
                   height={48}
@@ -383,35 +405,42 @@ export default function ProductManager({
             onSubmit={handleEditSubmit(handleSaveProductEdit)}
             className="space-y-3"
           >
-            <Input
-              placeholder="نام محصول"
+            <FloatingInput
+              label="نام محصول"
               {...registerEdit("name", { required: true })}
             />
-            <Input
+            <FloatingInput
+              className="text-left"
+              label="قیمت"
               type="number"
-              placeholder="قیمت"
               {...registerEdit("price", { valueAsNumber: true })}
             />
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" {...registerEdit("isAvailable")} />
               محصول موجود است
             </label>
-            <Input
+            <FloatingInput
+              className="text-left"
+              label="کالری (اختیاری)"
               type="number"
-              placeholder="کالری (اختیاری)"
               {...registerEdit("calories", {
                 setValueAs: (v) => (v === "" ? null : Number(v)),
               })}
             />
-            <Input
+            <FloatingInput
+              className="text-left"
+              label="زمان آماده سازی (دقیقه)"
               type="number"
-              placeholder="زمان آماده‌سازی (دقیقه)"
               {...registerEdit("averagePreparationMinutes", {
                 setValueAs: (v) => (v === "" ? null : Number(v)),
               })}
             />
             <DialogFooter>
-              <Button type="submit" disabled={editProductLoading}>
+              <Button
+                className="bg-blue-500 text-white hover:bg-blue-600 cursor-pointer transition"
+                type="submit"
+                disabled={editProductLoading}
+              >
                 {editProductLoading ? "در حال ذخیره..." : "ذخیره"}
               </Button>
             </DialogFooter>

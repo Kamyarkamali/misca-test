@@ -36,6 +36,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { FloatingInput } from "@/components/floating-input";
 
 export default function CategoryManager() {
   const params = useParams<{ slug?: string }>();
@@ -229,20 +230,24 @@ export default function CategoryManager() {
             <DialogTitle>ویرایش دسته‌بندی</DialogTitle>
           </DialogHeader>
 
-          <Input
-            placeholder="عنوان"
+          <FloatingInput
+            label="عنوان"
             value={editTitle}
             onChange={(e) => setEditTitle(e.target.value)}
           />
-          <Input
+          <FloatingInput
             type="number"
-            placeholder="ترتیب نمایش"
+            label="ترتیب نمایش"
             value={editDisplayOrder}
             onChange={(e) => setEditDisplayOrder(+e.target.value)}
           />
 
           <DialogFooter>
-            <Button onClick={handleSaveCategoryEdit} disabled={editLoading}>
+            <Button
+              className="bg-blue-500 hover:bg-blue-600 text-white transition cursor-pointer"
+              onClick={handleSaveCategoryEdit}
+              disabled={editLoading}
+            >
               ذخیره
             </Button>
           </DialogFooter>

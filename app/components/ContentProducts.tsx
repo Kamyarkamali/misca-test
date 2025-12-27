@@ -14,6 +14,21 @@ const ContentProducts: FC<UpdatedContentProductsProps> = ({
 }) => {
   const categories = menuData.categories ?? [];
   const businessItems = menuData.business ?? [];
+  const getProductImage = (product: any) => {
+    const image = product.images?.[0]?.imageUrl;
+
+    if (!image) return "/images/default.webp";
+
+    if (image.startsWith("https:/") && !image.startsWith("https://")) {
+      return image.replace("https:/", "https://");
+    }
+
+    if (!image.startsWith("http")) {
+      return `https://misca.ir/assets/images/products/${image}`;
+    }
+
+    return image;
+  };
 
   return (
     <div className="space-y-16 max-w-252.75 mx-auto">
@@ -33,10 +48,6 @@ const ContentProducts: FC<UpdatedContentProductsProps> = ({
 
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             {category.products.map((product) => {
-              const image = product.images?.[0]?.imageUrl
-                ? `https://misca.ir/assets/images/products/${product.images[0].imageUrl}`
-                : "/images/default.webp";
-
               return (
                 <div
                   key={product.id}
@@ -44,7 +55,7 @@ const ContentProducts: FC<UpdatedContentProductsProps> = ({
                 >
                   <div className="relative w-full aspect-square">
                     <Image
-                      src={image}
+                      src={getProductImage(product)}
                       alt={product.name}
                       fill
                       sizes="(max-width: 768px) 50vw, 40vw"
@@ -88,11 +99,14 @@ const ContentProducts: FC<UpdatedContentProductsProps> = ({
       <section>
         <Percentage menuData={businessItems} />
       </section>
-      {businessItems.businessLocation && (
-        <section>
-          <AddressComponents menuData={businessItems} />
-        </section>
-      )}
+      {businessItems.businessLocation &&
+        businessItems.businessLocation.latitude != null &&
+        businessItems.businessLocation.longitude != null &&
+        businessItems.businessLocation.postalAddress && (
+          <section>
+            <AddressComponents menuData={businessItems} />
+          </section>
+        )}
     </div>
   );
 };

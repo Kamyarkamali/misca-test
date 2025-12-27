@@ -1,5 +1,3 @@
-import { Product } from "./interfaces";
-
 export type LoginState = {
   error?: string;
   success?: boolean;
@@ -32,11 +30,11 @@ export type Product = {
   price: number;
   finalPrice: number;
   isAvailable: boolean;
-  calories: number | null;
-  averagePreparationMinutes: number | null;
+  calories?: number | null;
+  averagePreparationMinutes?: number | null;
   categoryId: string;
   imageId?: string | null;
-  images: ProductImage[];
+  images?: ProductImage[];
 };
 
 export type Category = {
@@ -53,9 +51,10 @@ export type Products = {
   finalPrice: number;
   isAvailable: boolean;
   calories: number | null;
-  averagePreparationMinutes: number | null;
+  averagePreparationMinutes?: number | null;
   categoryId: string;
   imageId?: string | null;
+  images?: { id: string; url: string }[];
 };
 
 export type Categorys = {
@@ -77,7 +76,7 @@ export interface Productss {
   name: string;
   price: number;
   isAvailable: boolean;
-  calories: number | null;
+  calories?: number | null;
   averagePreparationMinutes: number | null;
   categoryId: string;
   images: ProductImage[];

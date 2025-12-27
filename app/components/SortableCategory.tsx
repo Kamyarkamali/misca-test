@@ -30,14 +30,8 @@ export default function SortableCategory({
   handleEditCategory,
   handleDeleteCategory,
 }: SortableCategoryProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: cat.id });
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useSortable({ id: cat.id });
 
   const dragStyle = {
     transform: CSS.Transform.toString(transform),
@@ -79,6 +73,7 @@ export default function SortableCategory({
             >
               ویرایش
             </button>
+
             <button
               className="block px-4 py-2 hover:bg-red-50 text-red-600 w-full text-right"
               onClick={() => handleDeleteCategory(cat.id)}

@@ -51,7 +51,12 @@ export default function HeaderCategory() {
         <div className="flex items-center gap-2 text-gray-800">
           <HiHomeModern className="text-[20px]" />
           <div className="flex flex-col leading-tight">
-            <span className="text-[14.5px] font-semibold">{cafeName}</span>
+            <Link
+              href={`${`/b/${cafeName}/menu`}`}
+              className="text-[14.5px] font-semibold"
+            >
+              {cafeName}
+            </Link>
           </div>
         </div>
 
@@ -73,11 +78,14 @@ export default function HeaderCategory() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-1">
+        <div className="flex cursor-pointer items-center gap-1">
           <Button
+            onClick={() => {
+              window.location.href = "tel:+98 905 808 9095";
+            }}
             variant="ghost"
             size="icon"
-            className="text-gray-600 hover:bg-gray-100"
+            className="text-gray-600 hover:bg-gray-100 cursor-pointer"
           >
             <BiSupport />
           </Button>

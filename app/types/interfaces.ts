@@ -1,4 +1,5 @@
 import { ButtonHTMLAttributes, ReactNode } from "react";
+import { Products } from "./types";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
@@ -189,3 +190,9 @@ export type Product = {
   imageId?: string | null;
   images: ProductImage[];
 };
+
+export interface ProductCardProps {
+  product: Products;
+  onEdit: (product: Products) => void;
+  onDelete: (id: string) => void;
+}

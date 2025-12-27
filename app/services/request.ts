@@ -296,28 +296,32 @@ export const createProduct = async (
 };
 
 // ویرایش محصول
-// services/request.ts
 export const updateProduct = async (
-  payload: { productModel: any },
+  payload: {
+    id: string;
+    categoryId: string;
+    name: string;
+    isAvailable: boolean;
+    calories: number | null;
+    averagePreparationMinutes: number | null;
+    imageId: string | null;
+  },
   slug: string
 ) => {
   try {
-    // لاگ برای بررسی داده‌های ارسالی
-    console.log("Payload being sent:", JSON.stringify(payload, null, 2));
+    console.log("Payload being sent:", payload);
 
-    const res = await api.post(`/panel/products/update`, payload, {
+    const res = await api.post("/panel/products/update", payload, {
       headers: {
         "x-slug": slug,
         "Content-Type": "application/json",
       },
     });
 
-    console.log("Update successful:", res.data);
     return res.data;
   } catch (err: any) {
     console.error("Update Product Error:", err.response?.data || err.message);
-    console.error("Full error:", err);
-    throw new Error("خطا در ویرایش محصول");
+    throw err;
   }
 };
 
