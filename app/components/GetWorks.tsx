@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { BusinessesResponse } from "../types/interfaces";
 import { useState } from "react";
 import { FaPercentage } from "react-icons/fa";
-import { BiCalendarAlt, BiDirections } from "react-icons/bi";
+import { BiCalendarAlt } from "react-icons/bi";
 
 interface GetWorksProps {
   initialData: BusinessesResponse;

@@ -23,6 +23,7 @@ function Login() {
 
   const onSubmit = async (data: LoginForm) => {
     const success = await login(data.username, data.password);
+    console.log(data);
     if (success) {
       toast.success(LoginMessages.SUCCESS);
       router.replace("/workspace/business");

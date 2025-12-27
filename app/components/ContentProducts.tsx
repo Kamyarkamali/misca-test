@@ -15,8 +15,6 @@ const ContentProducts: FC<UpdatedContentProductsProps> = ({
   const categories = menuData.categories ?? [];
   const businessItems = menuData.business ?? [];
 
-  console.log(businessItems);
-
   return (
     <div className="space-y-16 max-w-252.75 mx-auto">
       {categories.map((category, index) => (
@@ -26,8 +24,9 @@ const ContentProducts: FC<UpdatedContentProductsProps> = ({
           className="space-y-6"
         >
           <h2
-            className={`${category.products.length ? "block" : "hidden"
-              } text-xl sm:text-2xl font-bold text-[#344e7c] pb-2`}
+            className={`${
+              category.products.length ? "block" : "hidden"
+            } text-xl sm:text-2xl font-bold text-[#344e7c] pb-2`}
           >
             {category.title}
           </h2>
@@ -62,17 +61,13 @@ const ContentProducts: FC<UpdatedContentProductsProps> = ({
                       <div className="flex gap-2 text-xs sm:text-sm text-muted">
                         {product.averagePreparationMinutes !== null && (
                           <div className="whitespace-nowrap flex gap-0.5 items-center">
-                            <GiSandsOfTime
-                              size={15}
-                            />
+                            <GiSandsOfTime size={15} />
                             {product.averagePreparationMinutes}m
                           </div>
                         )}
                         {product.averagePreparationMinutes !== null && (
                           <div className="whitespace-nowrap flex gap-0.5 items-center">
-                            <PiFireDuotone
-                              size={15}
-                            />
+                            <PiFireDuotone size={15} />
                             {product.calories}
                           </div>
                         )}

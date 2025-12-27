@@ -23,23 +23,7 @@ import {
   uploadCroppedImage,
 } from "../services/request";
 import ProductCard from "./ProductCard";
-
-export type ProductImage = {
-  id: string;
-  url: string;
-};
-
-type Product = {
-  id: string;
-  name: string;
-  price: number;
-  isAvailable: boolean;
-  calories: number | null;
-  averagePreparationMinutes: number | null;
-  categoryId: string;
-  imageId?: string | null;
-  images: ProductImage[];
-};
+import { ProductImages, Products } from "../types/types";
 
 type CreateProductForm = {
   name: string;
@@ -53,7 +37,7 @@ type CreateProductForm = {
 type ProductManagerProps = {
   categoryId: string;
   slug: string;
-  products?: Product[];
+  products?: Products[];
   fetchCategories: () => void;
 };
 
@@ -94,7 +78,9 @@ export default function ProductManager({
   fetchCategories,
 }: ProductManagerProps) {
   const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
-  const [uploadedImage, setUploadedImage] = useState<ProductImage | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<ProductImages | null>(
+    null
+  );
   const [uploading, setUploading] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -102,7 +88,7 @@ export default function ProductManager({
   const [croppedArea, setCroppedArea] = useState<any>(null);
   const [imageId, setImageId] = useState<string | null>(null);
 
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editingProduct, setEditingProduct] = useState<Products | null>(null);
   const [isEditProductOpen, setIsEditProductOpen] = useState(false);
   const [editProductLoading, setEditProductLoading] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
@@ -156,6 +142,7 @@ export default function ProductManager({
       }
 
       const image = res.data[0];
+      //@ts-ignore
       setUploadedImage({ id: image.id, url: image.url });
       setImageId(image.id);
       toast.success("عکس با موفقیت آپلود شد");
@@ -188,7 +175,7 @@ export default function ProductManager({
     }
   };
 
-  const handleEditProduct = (product: Product) => {
+  const handleEditProduct = (product: Products) => {
     setEditingProduct(product);
     resetEditForm({
       name: product.name,
@@ -276,7 +263,6 @@ export default function ProductManager({
         </p>
       )}
 
-      {/* =================== CREATE DIALOG =================== */}
       <Dialog open={isCreateProductOpen} onOpenChange={setIsCreateProductOpen}>
         <DialogContent>
           <DialogHeader>
@@ -289,6 +275,7 @@ export default function ProductManager({
               {...register("name", { required: true })}
             />
             <Input
+              className="text-left"
               type="number"
               placeholder="قیمت"
               {...register("price", { valueAsNumber: true })}
@@ -298,6 +285,7 @@ export default function ProductManager({
               محصول موجود است
             </label>
             <Input
+              className="text-left"
               type="number"
               placeholder="کالری (اختیاری)"
               {...register("calories", {
@@ -305,6 +293,7 @@ export default function ProductManager({
               })}
             />
             <Input
+              className="text-left"
               type="number"
               placeholder="زمان آماده‌سازی (دقیقه)"
               {...register("averagePreparationMinutes", {
@@ -351,6 +340,7 @@ export default function ProductManager({
             {uploadedImage && (
               <div className="flex items-center gap-2 mt-2">
                 <Image
+                  // @ts-ignore
                   src={uploadedImage.url}
                   alt="uploaded"
                   width={48}
@@ -383,7 +373,6 @@ export default function ProductManager({
         </DialogContent>
       </Dialog>
 
-      {/* =================== EDIT DIALOG =================== */}
       <Dialog open={isEditProductOpen} onOpenChange={setIsEditProductOpen}>
         <DialogContent>
           <DialogHeader>

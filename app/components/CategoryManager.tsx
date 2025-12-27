@@ -14,7 +14,6 @@ import SortableCategory from "./SortableCategory";
 import {
   getProductsInPanelMenu,
   deleteCategory,
-  updateCategory,
   updateCategoryOrders,
   updateCategoryTitle,
 } from "../services/request";
@@ -26,6 +25,10 @@ import {
   useSensors,
   DragEndEvent,
 } from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import {
   Dialog,
   DialogContent,
@@ -131,7 +134,6 @@ export default function CategoryManager() {
     }
   };
 
-  // DnD-kit setup
   const sensors = useSensors(useSensor(PointerSensor));
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -163,13 +165,12 @@ export default function CategoryManager() {
       toast.success("ترتیب دسته‌بندی‌ها بروزرسانی شد");
     } catch {
       toast.error("خطا در بروزرسانی ترتیب دسته‌بندی‌ها");
-      fetchCategories(); // fallback
+      fetchCategories();
     }
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 bg-gray-50 min-h-screen">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold">مدیریت دسته‌بندی‌ها</h1>
@@ -185,7 +186,6 @@ export default function CategoryManager() {
         </div>
       </div>
 
-      {/* Content */}
       {loading ? (
         <div className="py-32 flex justify-center">
           <UiLoader />
@@ -201,24 +201,28 @@ export default function CategoryManager() {
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          <Accordion type="single" collapsible className="space-y-4">
-            {filteredCategories.map((cat) => (
-              <SortableCategory
-                key={cat.id}
-                cat={cat}
-                activeMenu={activeMenu}
-                setActiveMenu={setActiveMenu}
-                slug={slug}
-                fetchCategories={fetchCategories}
-                handleEditCategory={handleEditCategory}
-                handleDeleteCategory={handleDeleteCategory}
-              />
-            ))}
-          </Accordion>
+          <SortableContext
+            items={filteredCategories.map((c) => c.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <Accordion type="single" collapsible className="space-y-4">
+              {filteredCategories.map((cat) => (
+                <SortableCategory
+                  key={cat.id}
+                  cat={cat}
+                  activeMenu={activeMenu}
+                  setActiveMenu={setActiveMenu}
+                  slug={slug}
+                  fetchCategories={fetchCategories}
+                  handleEditCategory={handleEditCategory}
+                  handleDeleteCategory={handleDeleteCategory}
+                />
+              ))}
+            </Accordion>
+          </SortableContext>
         </DndContext>
       )}
 
-      {/* Dialog Edit Category */}
       <Dialog open={isEditCategoryOpen} onOpenChange={setIsEditCategoryOpen}>
         <DialogContent>
           <DialogHeader>

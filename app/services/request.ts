@@ -4,7 +4,6 @@ import {
   CreateCategoryPayload,
   CreateProductPayload,
   GetBusinessesParams,
-  UpdateProductPayload,
 } from "../types/interfaces";
 
 interface LoginResponse {
@@ -16,7 +15,10 @@ export const loginRequest = async (
   username: string,
   password: string
 ): Promise<LoginResponse> => {
-  const res = await api.post("/auth/signin-password", { username, password });
+  const res = await api.post("/auth/signin-password", {
+    username,
+    password,
+  });
 
   const accessToken = res.data.data.accessToken.token;
   const refreshToken = res.data.data.accessToken.refreshToken;

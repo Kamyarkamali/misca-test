@@ -155,7 +155,7 @@ function LogoCropModal({ imageSrc, onClose, onSave }: LogoCropModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-md w-full max-w-md h-[500px] relative p-4 flex flex-col">
+      <div className="bg-white rounded-md w-full max-w-md h-125 relative p-4 flex flex-col">
         <div className="flex-1 relative">
           <Cropper
             image={imageSrc}
@@ -240,7 +240,6 @@ export default function CreateForm() {
     },
   });
   const vatPercentage = watch("vatPercentage");
-  const roundingStrategy = watch("roundingStrategy");
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -506,7 +505,7 @@ export default function CreateForm() {
                   )}
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-xs text-gray-500 truncate max-w-[200px]">
+                  <span className="text-xs text-gray-500 truncate max-w-50">
                     آپلود شده: {uploadedImage?.id ? "بله" : "خیر"}
                   </span>
                   <button

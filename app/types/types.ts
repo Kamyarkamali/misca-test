@@ -64,3 +64,22 @@ export type Categorys = {
   displayOrder?: number;
   products: Products[];
 };
+
+// types/product.ts
+export interface ProductImages {
+  id: string;
+  imageUrl: string;
+  alt?: string;
+}
+
+export interface Productss {
+  id: string;
+  name: string;
+  price: number;
+  isAvailable: boolean;
+  calories: number | null;
+  averagePreparationMinutes: number | null;
+  categoryId: string;
+  images: ProductImage[];
+  onEdit: any;
+}

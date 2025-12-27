@@ -34,6 +34,8 @@ const MenuNavbar: FC<MenuNavbarProps> = ({ menuData, categoryRefs }) => {
       }
     };
 
+    console.log({ menuData, categoryRefs });
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);

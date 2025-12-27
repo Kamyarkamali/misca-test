@@ -41,23 +41,17 @@ export default function SortableCategory({
 
   const dragStyle = {
     transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.8 : 1,
+    transition: isDragging ? "none" : "transform 300ms ease",
+    opacity: isDragging ? 0.9 : 1,
     boxShadow: isDragging ? "0 8px 20px rgba(0,0,0,0.25)" : "none",
     zIndex: isDragging ? 50 : "auto",
   };
 
   return (
-    <AccordionItem value={cat.id}>
-      <AccordionTrigger
-        ref={setNodeRef}
-        style={dragStyle}
-        className="relative flex flex-row-reverse justify-between bg-white p-4 rounded-xl shadow w-full"
-      >
-        {/* عنوان دسته */}
+    <AccordionItem value={cat.id} ref={setNodeRef} style={dragStyle}>
+      <AccordionTrigger className="relative flex flex-row-reverse justify-between bg-white p-4 rounded-xl shadow w-full">
         <span className="flex-1 text-right cursor-pointer">{cat.title}</span>
 
-        {/* منوی عملیات */}
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -68,12 +62,11 @@ export default function SortableCategory({
           <FiMoreVertical />
         </button>
 
-        {/* آیکون Drag */}
         <div
           {...attributes}
           {...listeners}
           className="p-2 ml-2 cursor-grab bg-gray-200 rounded"
-          onClick={(e) => e.stopPropagation()} // جلوگیری از باز شدن آکاردئون
+          onClick={(e) => e.stopPropagation()}
         >
           ⇅
         </div>
@@ -100,6 +93,7 @@ export default function SortableCategory({
         <ProductManager
           categoryId={cat.id}
           slug={slug}
+          // @ts-ignore
           products={cat.products}
           fetchCategories={fetchCategories}
         />
