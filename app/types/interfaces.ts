@@ -238,3 +238,8 @@ export interface CreateBusinessEventPayload {
   reserveCapacity: number;
   cost?: number | null;
 }
+
+export interface UpdateProductPricePayload {
+  id: string;
+  price: number;
+}

@@ -6,6 +6,7 @@ import {
   CreateCategoryPayload,
   CreateProductPayload,
   GetBusinessesParams,
+  UpdateProductPricePayload,
 } from "../types/interfaces";
 
 interface LoginResponse {
@@ -426,4 +427,25 @@ export const fetchEvents = async (
   });
 
   return res.data.data ?? res.data;
+};
+
+// آپدیت قیمت
+export const updateProductPrice = async (
+  slug: string,
+  payload: UpdateProductPricePayload
+) => {
+  const res = await api.post(
+    "/panel/products/update-price",
+    {
+      id: payload.id,
+      price: payload.price,
+    },
+    {
+      headers: {
+        "x-slug": slug,
+      },
+    }
+  );
+
+  return res.data;
 };

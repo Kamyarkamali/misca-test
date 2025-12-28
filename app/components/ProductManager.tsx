@@ -119,6 +119,8 @@ export default function ProductManager({
     },
   });
 
+  console.log(products);
+
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return;
     const reader = new FileReader();
@@ -188,6 +190,7 @@ export default function ProductManager({
     const productForCard: Product = {
       id: product.id,
       name: product.name,
+      isAvailable: product.isAvailable,
       price: product.price,
       finalPrice: product.finalPrice,
       averagePreparationMinutes: product.averagePreparationMinutes ?? undefined,
@@ -218,13 +221,15 @@ export default function ProductManager({
         isAvailable: Boolean(data.isAvailable),
         calories: data.calories ?? null,
         averagePreparationMinutes: data.averagePreparationMinutes ?? null,
-        imageId: editingProduct.imageId ?? null,
+        imageId: uploadedImage?.id ?? editingProduct.imageId ?? null,
       };
 
       await updateProduct(payload, slug);
 
       toast.success("محصول بروزرسانی شد");
       setIsEditProductOpen(false);
+      setUploadedImage(null);
+      setImageId(null);
       fetchCategories();
     } catch {
       toast.error("خطا در ویرایش محصول");
@@ -306,6 +311,7 @@ export default function ProductManager({
               <input type="checkbox" {...register("isAvailable")} />
               محصول موجود است
             </label>
+
             <FloatingInput
               className="text-left"
               type="number"
@@ -405,20 +411,27 @@ export default function ProductManager({
             onSubmit={handleEditSubmit(handleSaveProductEdit)}
             className="space-y-3"
           >
+            {/* نام محصول */}
             <FloatingInput
               label="نام محصول"
               {...registerEdit("name", { required: true })}
             />
+
+            {/* قیمت */}
             <FloatingInput
               className="text-left"
               label="قیمت"
               type="number"
               {...registerEdit("price", { valueAsNumber: true })}
             />
+
+            {/* موجود بودن */}
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" {...registerEdit("isAvailable")} />
               محصول موجود است
             </label>
+
+            {/* کالری */}
             <FloatingInput
               className="text-left"
               label="کالری (اختیاری)"
@@ -427,6 +440,8 @@ export default function ProductManager({
                 setValueAs: (v) => (v === "" ? null : Number(v)),
               })}
             />
+
+            {/* زمان آماده‌سازی */}
             <FloatingInput
               className="text-left"
               label="زمان آماده سازی (دقیقه)"
@@ -435,6 +450,82 @@ export default function ProductManager({
                 setValueAs: (v) => (v === "" ? null : Number(v)),
               })}
             />
+
+            {/* نمایش عکس فعلی */}
+            {editingProduct?.images?.[0]?.imageUrl && !imageSrc && (
+              <div className="flex items-center gap-2 mt-2">
+                <Image
+                  src={editingProduct.images[0].imageUrl}
+                  alt="current"
+                  width={64}
+                  height={64}
+                  className="rounded"
+                />
+              </div>
+            )}
+
+            {/* آپلود عکس جدید */}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={onSelectFile}
+              className="hidden"
+              id="edit-product-image"
+            />
+            <label
+              htmlFor="edit-product-image"
+              className="w-23 h-23 border border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:text-blue-500 transition bg-gray-50"
+            >
+              <MdOutlineAddPhotoAlternate size={36} />
+            </label>
+
+            {/* Cropper */}
+            {imageSrc && (
+              <div className="relative h-64 bg-black mt-2">
+                <Cropper
+                  image={imageSrc}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={1}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                />
+                <Button
+                  type="button"
+                  className="absolute bottom-2 left-2"
+                  onClick={handleUploadCroppedImage}
+                  disabled={uploading}
+                >
+                  {uploading ? "در حال آپلود..." : "تایید عکس"}
+                </Button>
+              </div>
+            )}
+
+            {/* نمایش تصویر آپلود شده */}
+            {uploadedImage && (
+              <div className="flex items-center gap-2 mt-2">
+                <Image
+                  // @ts-ignore
+                  src={uploadedImage.url || DEFAULT_IMAGE_ID}
+                  alt="uploaded"
+                  width={48}
+                  height={48}
+                  className="rounded"
+                />
+                <button
+                  type="button"
+                  className="text-red-500 text-xs"
+                  onClick={() => {
+                    setUploadedImage(null);
+                    setImageId(null);
+                  }}
+                >
+                  حذف
+                </button>
+              </div>
+            )}
+
             <DialogFooter>
               <Button
                 className="bg-blue-500 text-white hover:bg-blue-600 cursor-pointer transition"

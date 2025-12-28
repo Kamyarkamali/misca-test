@@ -13,7 +13,7 @@ export const FloatingInput = forwardRef<HTMLInputElement, FloatingInputProps>(
         <Input
           ref={ref}
           placeholder=" "
-          className={cn("peer h-12 pt-6", className)}
+          className={cn("peer h-12 pt-6 ltr", className)}
           {...props}
         />
 

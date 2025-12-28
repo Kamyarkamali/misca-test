@@ -5,6 +5,8 @@ import { createCategory } from "../services/request";
 import { useParams } from "next/navigation";
 import { FaPlus } from "react-icons/fa6";
 import { FormCreateCategoryProps } from "../types/interfaces";
+import { FloatingInput } from "@/components/floating-input";
+import { Input } from "@/components/ui/input";
 
 export default function FormCreateCategory({
   onSuccess,
@@ -76,23 +78,12 @@ export default function FormCreateCategory({
             <h2 className="text-xl font-bold text-center">دسته‌بندی جدید</h2>
 
             <div className="flex flex-col gap-1">
-              <label className="font-medium text-gray-700">عنوان</label>
-              <input
+              <label>نام دسته بندی</label>
+              <Input
+                placeholder="مثلا قهوه"
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="مثلاً قهوه"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label className="font-medium text-gray-700">الویت</label>
-              <input
-                type="number"
-                value={displayOrder}
-                onChange={(e) => setDisplayOrder(Number(e.target.value))}
-                placeholder="مثلاً 0"
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -100,17 +91,17 @@ export default function FormCreateCategory({
             <div className="flex justify-end gap-2 mt-4">
               <button
                 onClick={() => setOpen(false)}
-                className="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors"
+                className="px-4 py-2 rounded-md border text-white cursor-pointer bg-red-500 hover:bg-red-600 transition-colors"
               >
                 لغو
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-2 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md cursor-pointer hover:bg-blue-700 flex items-center gap-2 transition-colors disabled:opacity-50"
               >
                 {loading && (
-                  <span className="loader-border h-4 w-4 border-2 rounded-full border-white border-t-transparent animate-spin"></span>
+                  <span className="loader-border h-4 w-4 text-white cursor-pointer rounded-full bg-blue-500 hover:bg-blue-600 transition animate-spin"></span>
                 )}
                 افزودن
               </button>

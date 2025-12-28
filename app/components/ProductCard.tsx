@@ -20,6 +20,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { updateProductPrice } from "../services/request";
+import { useParams } from "next/navigation";
+import { FloatingInput } from "@/components/floating-input";
 
 const DEFAULT_IMAGE = "/images/default.webp";
 
@@ -37,6 +40,7 @@ export type Product = {
   calories?: number;
   productIngredients?: string | null;
   images?: any;
+  isAvailable?: boolean;
 };
 
 type ProductCardProps = {
@@ -50,17 +54,30 @@ export default function ProductCard({
   product,
   onEdit,
   onDelete,
-  onUpdatePrice,
 }: ProductCardProps) {
   const [openModal, setOpenModal] = useState(false);
   const [newPrice, setNewPrice] = useState(product.finalPrice ?? product.price);
+  const [displayPrice, setDisplayPrice] = useState(
+    product.finalPrice ?? product.price
+  );
 
-  const handleSave = () => {
-    onUpdatePrice(product.id, newPrice);
-    setOpenModal(false);
+  const params = useParams();
+
+  const handleSavePrice = async () => {
+    try {
+      setDisplayPrice(newPrice);
+
+      await updateProductPrice(params.slug as string, {
+        id: product.id,
+        price: newPrice,
+      });
+
+      setOpenModal(false);
+    } catch (error) {
+      setDisplayPrice(product.finalPrice ?? product.price);
+      console.error("خطا در آپدیت قیمت:", error);
+    }
   };
-
-  console.log(product);
 
   return (
     <div className="bg-white rounded-xl shadow p-3 text-center relative flex flex-col">
@@ -104,7 +121,7 @@ export default function ProductCard({
       {/* نام و قیمت */}
       <p className="font-medium text-base">{product.name}</p>
       <p className="text-sm text-gray-500 mb-2">
-        {(product.finalPrice ?? product.price).toLocaleString()} تومان
+        {displayPrice.toLocaleString()} تومان
       </p>
 
       {/* اطلاعات جزئی به صورت ردیفی */}
@@ -132,21 +149,36 @@ export default function ProductCard({
 
           <div>
             <label>قیمت فعلی</label>
-            <Input value={product.finalPrice ?? product.price} disabled />
+            <Input
+              className="text-left"
+              value={product.finalPrice ?? product.price}
+              disabled
+            />
           </div>
 
           <div>
-            <label>قیمت جدید</label>
-            <Input
+            <FloatingInput
+              label="قیمت جدید"
               type="number"
               value={newPrice}
+              className="text-left ltr"
               onChange={(e) => setNewPrice(Number(e.target.value))}
             />
           </div>
 
           <DialogFooter>
-            <Button onClick={() => setOpenModal(false)}>لغو</Button>
-            <Button onClick={handleSave}>ذخیره</Button>
+            <Button
+              className="bg-red-500 hover:bg-red-600 transition text-white cursor-pointer"
+              onClick={() => setOpenModal(false)}
+            >
+              لغو
+            </Button>
+            <Button
+              className="bg-blue-500 hover:bg-blue-600 transition text-white cursor-pointer"
+              onClick={handleSavePrice}
+            >
+              ذخیره
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
