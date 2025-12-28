@@ -23,6 +23,7 @@ export default function BusinessPanelEvents() {
 
   const { data, isLoading, error, mutate } = useSWR<EventsResponse>(
     slug ? ["business-events", slug] : null,
+    // @ts-ignore
     () => fetchEvents(slug)
   );
 

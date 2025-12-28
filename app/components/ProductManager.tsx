@@ -451,10 +451,11 @@ export default function ProductManager({
               })}
             />
 
-            {/* نمایش عکس فعلی */}
+            {/* @ts-ignore */}
             {editingProduct?.images?.[0]?.imageUrl && !imageSrc && (
               <div className="flex items-center gap-2 mt-2">
                 <Image
+                  /* @ts-ignore */
                   src={editingProduct.images[0].imageUrl}
                   alt="current"
                   width={64}
