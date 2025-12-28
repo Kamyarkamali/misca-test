@@ -91,7 +91,6 @@ export default function ProductCard({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* تصویر محصول */}
       <div className="w-full aspect-square relative mb-3">
         <Image
           src={product.images?.[0]?.imageUrl || DEFAULT_IMAGE}

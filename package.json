@@ -22,6 +22,7 @@
     "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "jalali-moment": "^3.3.11",
     "js-cookie": "^3.0.5",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.562.0",
@@ -33,8 +34,10 @@
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.5.0",
     "react-leaflet": "^5.0.0",
+    "react-multi-date-picker": "^4.5.2",
     "react-sortablejs": "^6.1.4",
     "react-spinners": "^0.17.0",
+    "react-time-picker": "^8.0.2",
     "swr": "^2.3.8",
     "tailwind-merge": "^3.4.0",
     "zod": "^4.2.1"

@@ -196,3 +196,45 @@ export interface ProductCardProps {
   onEdit: (product: Products) => void;
   onDelete: (id: string) => void;
 }
+
+export interface BusinessEvent {
+  id: string;
+  title: string;
+  startAtUtc?: number;
+  endAtUtc?: number;
+  description?: string;
+  image?: string | null;
+  coverImage?: string | null;
+  createdAtUtc?: number;
+}
+
+export interface BusinessPanelEventsProps {
+  events: BusinessEvent[];
+}
+
+export interface Event {
+  id: string;
+  title: string;
+  startAtUtc: number;
+  endAtUtc: number;
+  description: string;
+  image: string | null;
+  coverImage: string | null;
+  createdAtUtc: number;
+}
+
+export interface BusinessPanelEventsProps {
+  events1: Event[];
+}
+
+export interface CreateBusinessEventPayload {
+  title: string;
+  startAtUtc: number;
+  endAtUtc: number;
+  description?: string | null;
+  image?: string | null;
+  coverImage?: string | null;
+  canReserve: boolean;
+  reserveCapacity: number;
+  cost?: number | null;
+}

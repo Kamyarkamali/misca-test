@@ -1,5 +1,7 @@
 import api from "../configs/api";
 import {
+  BusinessEvent,
+  CreateBusinessEventPayload,
   CreateBusinessPayload,
   CreateCategoryPayload,
   CreateProductPayload,
@@ -384,4 +386,44 @@ export const updateCategoryTitle = async (
     console.error("خطا در بروزرسانی دسته‌بندی:", err);
     throw err;
   }
+};
+
+// ساخت رویدادها
+
+export const createBusinessEvent = async (
+  slug: string,
+  payload: CreateBusinessEventPayload
+) => {
+  try {
+    const res = await api.post(`/panel/business-events`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+        "x-slug": slug,
+      },
+    });
+
+    return res.data;
+  } catch (error: any) {
+    console.error(
+      "خطا در ایجاد رویداد:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+export const fetchEvents = async (
+  slug: string,
+  page: number = 1
+): Promise<BusinessEvent[]> => {
+  const res = await api.get(`/panel/business-events`, {
+    headers: {
+      "x-slug": slug,
+    },
+    params: {
+      page,
+    },
+  });
+
+  return res.data.data ?? res.data;
 };

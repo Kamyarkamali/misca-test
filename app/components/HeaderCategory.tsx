@@ -64,7 +64,11 @@ export default function HeaderCategory() {
           {menuCategory.map((item) => (
             <Link
               key={item.id}
-              href={item.path ?? "#"}
+              href={
+                item.key === "business-events"
+                  ? `/businesspanel/${params.slug}/BusinessEvent`
+                  : item.path ?? "#"
+              }
               className="
                 text-[14px]
                 font-medium
@@ -151,7 +155,11 @@ export default function HeaderCategory() {
                 {menuCategory.map((item) => (
                   <Link
                     key={item.id}
-                    href={item.path ?? "#"}
+                    href={
+                      item.key === "business-events"
+                        ? `/businesspanel/${params.slug}/BusinessEvent`
+                        : item.path ?? "#"
+                    }
                     className="
                       px-4 py-3
                       rounded-lg
