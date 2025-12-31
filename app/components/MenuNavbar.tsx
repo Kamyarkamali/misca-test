@@ -103,7 +103,7 @@ const MenuNavbar: FC<MenuNavbarProps> = ({ menuData, categoryRefs }) => {
             "background-color 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease",
         }}
       >
-        <div className="container mx-auto px-4 py-3 flex justify-start">
+        <div className="container mx-auto px-4 py-3  flex justify-start">
           <button
             onClick={() => setOpen(true)}
             className={`
@@ -118,7 +118,7 @@ const MenuNavbar: FC<MenuNavbarProps> = ({ menuData, categoryRefs }) => {
           >
             <FiMenu
               size={22}
-              className={`transition-colors ${
+              className={`transition-colors  ${
                 scrolled ? "text-gray-800" : "text-gray-700"
               }`}
             />

@@ -118,7 +118,10 @@ export default function HeaderCategory() {
               align="end"
               className="flex flex-col items-end cursor-pointer"
             >
-              <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="text-red-600 w-full flex items-center justify-end cursor-pointer"
+              >
                 خروج
               </DropdownMenuItem>
             </DropdownMenuContent>

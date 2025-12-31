@@ -6,7 +6,7 @@ export const menuCategory = [
   },
   {
     id: "2",
-    title: "کسب و کارها",
+    title: "منو",
     path: "/workspace/business",
   },
 

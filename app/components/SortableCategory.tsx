@@ -10,6 +10,7 @@ import {
 import { FiMoreVertical } from "react-icons/fi";
 import ProductManager from "./ProductManager";
 import { Categorys } from "../types/types";
+import { useEffect, useRef } from "react";
 
 interface SortableCategoryProps {
   cat: Categorys;
@@ -32,6 +33,7 @@ export default function SortableCategory({
 }: SortableCategoryProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useSortable({ id: cat.id });
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   const dragStyle = {
     transform: CSS.Transform.toString(transform),
@@ -41,10 +43,29 @@ export default function SortableCategory({
     zIndex: isDragging ? 50 : "auto",
   };
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        activeMenu === cat.id &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node)
+      ) {
+        setActiveMenu(null);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [activeMenu, cat.id, setActiveMenu]);
+
   return (
     <AccordionItem value={cat.id} ref={setNodeRef} style={dragStyle}>
-      <AccordionTrigger className="relative flex flex-row-reverse justify-between bg-white p-4 rounded-xl shadow w-full">
-        <span className="flex-1 text-right cursor-pointer">{cat.title}</span>
+      <AccordionTrigger className="relative flex flex-row-reverse justify-between hover:no-underline items-center  bg-white p-4 rounded-xl shadow w-full">
+        <span className="flex-1 hover:text-gray-500 transition text-right cursor-pointer">
+          {cat.title}
+        </span>
 
         <button
           onClick={(e) => {
@@ -66,7 +87,10 @@ export default function SortableCategory({
         </div>
 
         {activeMenu === cat.id && (
-          <div className="absolute top-12 right-0 bg-white shadow rounded-md text-sm z-10 w-40">
+          <div
+            ref={menuRef}
+            className="absolute top-12 right-0 bg-white shadow rounded-md text-sm z-10 w-40"
+          >
             <button
               className="block px-4 py-2 hover:bg-gray-100 w-full text-right"
               onClick={() => handleEditCategory(cat)}

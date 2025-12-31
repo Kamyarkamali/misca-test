@@ -449,3 +449,16 @@ export const updateProductPrice = async (
 
   return res.data;
 };
+
+export const getBusinessEvents = async ({ slug, page = 1 }: any) => {
+  const res = await api.get("/panel/business-events", {
+    headers: {
+      "x-slug": slug,
+    },
+    params: {
+      page,
+    },
+  });
+
+  return res.data;
+};

@@ -83,7 +83,7 @@ export default function ProductCard({
     <div className="bg-white rounded-xl shadow p-3 text-center relative flex flex-col">
       {/* دکمه منو */}
       <DropdownMenu>
-        <DropdownMenuTrigger className="z-999" asChild>
+        <DropdownMenuTrigger className="z-10" asChild>
           <button className="absolute cursor-pointer top-2 right-2 p-0 w-8 h-8 flex items-center justify-center rounded-md transition-colors">
             <FiMoreVertical
               size={30}
